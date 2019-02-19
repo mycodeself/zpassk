@@ -1,0 +1,5 @@
+Social Identity Management
+- Gestión de identidades para Marketing
+- Principalmente RRSS (LinkedIn, Facebook, Twitter, Instagram...)
+- Scapping
+- Proxy
