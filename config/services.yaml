@@ -26,3 +26,19 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+
+## REPOSITORY
+    App\Doctrine\Repository\UserRepository:
+        factory: ["@doctrine.orm.entity_manager", getRepository]
+        arguments:
+            - App\Entity\User
+
+    App\Repository\UserRepositoryInterface:
+        alias: App\Doctrine\Repository\UserRepository
+
+
+## SECURITY
+    App\Security\UserProvider:
+        arguments:
+            $userRepository: '@App\Repository\UserRepositoryInterface'
