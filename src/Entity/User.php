@@ -3,10 +3,16 @@
 namespace App\Entity;
 
 use App\Entity\ValueObject\PasswordEncoded;
+use App\Exception\InvalidRoleException;
 use DateTimeInterface;
 
 class User
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_USER = 'ROLE_USER';
+
+    const VALID_ROLES = [self::ROLE_ADMIN, self::ROLE_USER];
+
     /**
      * @var int
      */
@@ -46,6 +52,39 @@ class User
      * @var array
      */
     private $roles;
+
+    /**
+     * User constructor.
+     * @param string $username
+     * @param string $email
+     * @param PasswordEncoded $password
+     * @param array $roles
+     * @throws InvalidRoleException
+     */
+    public function __construct(string $username, string $email, PasswordEncoded $password, array $roles)
+    {
+        $this->username = $username;
+        $this->email = $email;
+        $this->password = $password;
+        $this->token = '';
+        $this->enabled = true;
+        $this->setRoles($roles);
+    }
+
+    /**
+     * @param array $roles
+     * @throws InvalidRoleException
+     */
+    private function setRoles(array $roles): void
+    {
+        foreach ($roles as $role) {
+            if(!in_array($role, self::VALID_ROLES)) {
+                throw new InvalidRoleException($role);
+            }
+        }
+
+        $this->roles = $roles;
+    }
 
     /**
      * @return int
@@ -111,5 +150,28 @@ class User
         return $this->roles;
     }
 
+    /**
+     *
+     */
+    public function disable(): void
+    {
+        $this->enabled = false;
+    }
+
+    /**
+     *
+     */
+    public function enable(): void
+    {
+        $this->enabled = true;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getUsername();
+    }
 
 }

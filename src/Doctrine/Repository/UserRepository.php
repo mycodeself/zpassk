@@ -52,7 +52,7 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         $user = $this->findById($id);
 
         if(empty($user)) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException((string) $id);
         }
 
         return $user;
