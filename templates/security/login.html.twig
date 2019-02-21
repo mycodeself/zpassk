@@ -6,19 +6,26 @@
     <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
 {% endif %}
 
-<form action="{{ path('login') }}" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="_username" value="{{ last_username }}" />
+    <main class="login-wrapper">
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="_password" />
+        <div class="login__box">
+            <form class="login__form" action="{{ path('login') }}" method="post">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="_username" value="{{ last_username }}" />
 
-    <input type="hidden" name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}"
-    >
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="_password" />
+
+                <input type="hidden" name="_csrf_token"
+                       value="{{ csrf_token('authenticate') }}"
+                >
 
 
-    <button type="submit">login</button>
-</form>
+                <button class="waves-effect waves-light btn" type="submit">login</button>
+            </form>
+        </div>
+
+    </main>
+
 
 {% endblock %}
