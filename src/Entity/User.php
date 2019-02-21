@@ -66,7 +66,6 @@ class User
         $this->username = $username;
         $this->email = $email;
         $this->password = $password;
-        $this->token = '';
         $this->enabled = true;
         $this->setRoles($roles);
     }

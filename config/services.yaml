@@ -42,3 +42,9 @@ services:
     App\Security\UserProvider:
         arguments:
             $userRepository: '@App\Repository\UserRepositoryInterface'
+
+
+## APPLICATION SERVICES
+    App\Service\UserService:
+        arguments:
+            $userRepository: '@App\Repository\UserRepositoryInterface'

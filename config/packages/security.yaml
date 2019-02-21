@@ -1,7 +1,13 @@
 security:
+    encoders:
+        App\Security\AuthUser:
+            algorithm: bcrypt
+            cost: 12
     providers:
         db_provider:
             id: App\Security\UserProvider
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

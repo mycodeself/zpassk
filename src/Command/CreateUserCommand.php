@@ -22,6 +22,17 @@ class CreateUserCommand extends Command
     private $userService;
 
     /**
+     * CreateUserCommand constructor.
+     * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+        parent::__construct();
+    }
+
+
+    /**
      * {@inheritdoc}
      */
     protected function configure()
@@ -31,7 +42,7 @@ class CreateUserCommand extends Command
             ->addArgument('username', InputArgument::REQUIRED, 'Username of the user to create.')
             ->addArgument('email', InputArgument::REQUIRED, 'Email of the user to create.')
             ->addArgument('password', InputArgument::REQUIRED, 'Plain password of the user to create.')
-            ->addArgument('role', InputArgument::REQUIRED, 'Role for the user (ROLE_ADMIN or ROLE_USER)', User::ROLE_USER)
+            ->addArgument('role', InputArgument::OPTIONAL, 'Role for the user (ROLE_ADMIN or ROLE_USER)', User::ROLE_USER)
         ;
     }
 
@@ -46,11 +57,7 @@ class CreateUserCommand extends Command
         $password = $input->getArgument('password');
         $roles = (array) $input->getArgument('role');
 
-        $output->writeln([
-            'Create user',
-            '===========',
-            ''
-        ]);
+        $output->writeln('Creating user...');
 
         $password = new PasswordEncoded($password);
 
@@ -62,6 +69,8 @@ class CreateUserCommand extends Command
         );
 
         $this->userService->create($user);
+
+        $output->writeln('User created successfully.');
     }
 
 }
