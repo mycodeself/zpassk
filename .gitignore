@@ -31,3 +31,4 @@ yarn-error.log
 .cache
 .npm
 .config
+.bash_history
