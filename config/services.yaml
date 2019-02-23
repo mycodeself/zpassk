@@ -1,10 +1,6 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    mail.default_from: 'draftee@gmail.com'
 
 services:
     # default configuration for services in *this* file
@@ -43,8 +39,25 @@ services:
         arguments:
             $userRepository: '@App\Repository\UserRepositoryInterface'
 
+    App\Security\AccessDeniedHandler:
+        arguments:
+            $router: '@router'
+
 
 ## APPLICATION SERVICES
     App\Service\UserService:
         arguments:
             $userRepository: '@App\Repository\UserRepositoryInterface'
+
+    App\Service\SecurityService:
+        arguments:
+            $userRepository: '@App\Repository\UserRepositoryInterface'
+            $mailSender: '@App\Mail\MailSender'
+
+
+## MAIL
+    App\Mail\MailSender:
+        arguments:
+            $mailer: '@mailer'
+            $templating: '@twig'
+            $defaultFrom: '%mail.default_from%'

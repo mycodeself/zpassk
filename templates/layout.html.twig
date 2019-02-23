@@ -2,11 +2,12 @@
 
 {% block body %}
 
-    <nav></nav>
-    <main>
-        {% block main %}
-        {% endblock %}
-    </main>
-    <footer></footer>
+    {% include('_partials/_nav.html.twig') %}
 
+    <main>
+        <div class="container">
+            {% block main %}
+            {% endblock %}
+        </div>
+    </main>
 {% endblock %}

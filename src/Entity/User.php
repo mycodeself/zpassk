@@ -166,6 +166,24 @@ class User
     }
 
     /**
+     * @param string $plainPassword
+     */
+    public function changePassword(string $plainPassword): void
+    {
+        $this->password = new PasswordEncoded($plainPassword);
+        $this->token = null;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function requestNewPassword(): void
+    {
+        $this->token = bin2hex(random_bytes(32));
+        $this->passwordRequestedAt = new \DateTimeImmutable();
+    }
+
+    /**
      * @return string
      */
     public function __toString(): string

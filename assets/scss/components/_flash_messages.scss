@@ -1,0 +1,26 @@
+.flash-messages__container {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.flash-message {
+  color: white;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+
+  .material-icons { margin-right: 0.5em; font-size: 20px; }
+
+}
+
+.flash-message--success {
+  background-color: $success-color;
+}
+
+.flash-message--error {
+  background-color: $error-color;
+}

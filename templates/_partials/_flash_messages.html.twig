@@ -1,0 +1,14 @@
+<div class="container flash-messages__container">
+    {% for label, messages in app.flashes(['success', 'error']) %}
+            {% for message in messages %}
+                <div class="flash-message flash-message--{{ label }} z-depth-1">
+                    {% if label == 'success' %}
+                        <i class="material-icons">check_circle</i>
+                    {% else %}
+                        <i class="material-icons">error</i>
+                    {% endif %}
+                    {{ message }}
+                </div>
+            {% endfor %}
+    {% endfor %}
+</div>

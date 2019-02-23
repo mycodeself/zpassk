@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Service;
+
+use App\Exception\UserNotFoundException;
+use App\Mail\MailSender;
+use App\Repository\UserRepositoryInterface;
+use App\Service\DTO\ChangePasswordWithTokenDTO;
+use App\Service\DTO\RecoveryPasswordDTO;
+
+class SecurityService
+{
+    /**
+     * @var UserRepositoryInterface
+     */
+    private $userRepository;
+
+    /**
+     * @var MailSender
+     */
+    private $mailSender;
+
+    /**
+     * SecurityService constructor.
+     * @param UserRepositoryInterface $userRepository
+     * @param MailSender $mailSender
+     */
+    public function __construct(UserRepositoryInterface $userRepository, MailSender $mailSender)
+    {
+        $this->userRepository = $userRepository;
+        $this->mailSender = $mailSender;
+    }
+
+    /**
+     * @param RecoveryPasswordDTO $recoveryPasswordDTO
+     * @throws \Exception
+     */
+    public function recoveryPassword(RecoveryPasswordDTO $recoveryPasswordDTO): void
+    {
+        $user = $this->userRepository->findByEmail($recoveryPasswordDTO->getEmail());
+
+        if(empty($user)) {
+            return;
+        }
+
+        $user->requestNewPassword();
+        $this->userRepository->save($user);
+
+        try {
+            $this->mailSender->sendRecoveryPasswordEmail($user);
+        } catch (\Twig_Error_Loader $e) {
+        } catch (\Twig_Error_Runtime $e) {
+        } catch (\Twig_Error_Syntax $e) {
+        }
+
+    }
+
+    /**
+     * @param ChangePasswordWithTokenDTO $changePasswordWithTokenDTO
+     * @throws UserNotFoundException
+     */
+    public function changePasswordWithToken(ChangePasswordWithTokenDTO $changePasswordWithTokenDTO): void
+    {
+        $user = $this->userRepository->findByToken($changePasswordWithTokenDTO->getToken());
+
+        if(empty($user)) {
+            throw new UserNotFoundException($changePasswordWithTokenDTO->getToken());
+        }
+
+        $user->changePassword($changePasswordWithTokenDTO->getNewPassword());
+
+        $this->userRepository->save($user);
+    }
+
+}

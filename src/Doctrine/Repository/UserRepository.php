@@ -22,7 +22,7 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
      * @param string $username
      * @return User
      */
-    public function findByUsername(string $username): User
+    public function findByUsername(string $username): ?User
     {
         /** @var User $user */
         $user = $this->findOneBy(['username' => $username]);
@@ -68,5 +68,29 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         $em = $this->getEntityManager();
         $em->persist($user);
         $em->flush();
+    }
+
+    /**
+     * @param string $email
+     * @return User|null
+     */
+    public function findByEmail(string $email): ?User
+    {
+        /** @var User $user */
+        $user = $this->findOneBy(['email' => $email]);
+
+        return $user;
+    }
+
+    /**
+     * @param string $token
+     * @return User|null
+     */
+    public function findByToken(string $token): ?User
+    {
+        /** @var User $user */
+        $user = $this->findOneBy(['token' => $token]);
+
+        return $user;
     }
 }

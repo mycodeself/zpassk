@@ -4,7 +4,10 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Exception\UserNotFoundException;
 use App\Repository\UserRepositoryInterface;
+use App\Service\DTO\ChangePasswordWithTokenDTO;
+use App\Service\DTO\RecoveryPasswordDTO;
 
 class UserService
 {
@@ -22,7 +25,6 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-
     public function create(User $user): void
     {
 
@@ -33,4 +35,5 @@ class UserService
     {
 
     }
+
 }

@@ -1,1 +1,23 @@
-@import "~materialize-css/sass/materialize";
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+SC:100,300,400,500');
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow-x: hidden;
+  background-color: #FAFAFA;
+  font-size: 14px;
+  color: #4a4a4a;;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 300;
+}
+
+@import "materialize/all";
+
+@import "pages/security";
+
+@import "components/flash_messages";
+
+
