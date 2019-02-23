@@ -27,12 +27,19 @@ class Group
     private $imagePath;
 
     /**
+     * @var User
+     */
+    private $owner;
+
+    /**
      * Group constructor.
      * @param string $name
      */
-    public function __construct(string $name)
+    public function __construct(string $name, User $owner)
     {
         $this->name = $name;
+        $this->owner = $owner;
+        $this->imagePath = '';
         $this->users = new ArrayCollection();
     }
 
@@ -84,6 +91,14 @@ class Group
     public function addUser(User $user): void
     {
         $this->users->add($user);
+    }
+
+    /**
+     * @return User
+     */
+    public function getOwner(): User
+    {
+        return $this->owner;
     }
 
     /**

@@ -1,5 +1,35 @@
 {% extends 'layout.html.twig' %}
+{% block title %}SocialIM :: Users{% endblock %}
 
 {% block main %}
-    <h1>Users</h1>
+    <header>
+        <h2 class="header">Users</h2>
+    </header>
+    <div class="card">
+    <table class="highlight">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>E-mail</th>
+            <th>Role</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for user in users %}
+            <tr class="cursor"
+                onclick="window.location = '{{ path('user_update', {'id': user.id}) }}'"
+            >
+                <td>{{ user }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.roles[0] }}</td>
+                <td>Enabled</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    </div>
+
 {% endblock %}

@@ -8,7 +8,6 @@ use App\Form\Type\RecoveryPasswordType;
 use App\Repository\UserRepositoryInterface;
 use App\Service\DTO\ChangePasswordWithTokenDTO;
 use App\Service\SecurityService;
-use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

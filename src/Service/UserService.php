@@ -8,6 +8,7 @@ use App\Exception\UserNotFoundException;
 use App\Repository\UserRepositoryInterface;
 use App\Service\DTO\ChangePasswordWithTokenDTO;
 use App\Service\DTO\RecoveryPasswordDTO;
+use App\Service\DTO\UpdateUserDTO;
 
 class UserService
 {
@@ -31,7 +32,10 @@ class UserService
         $this->userRepository->save($user);
     }
 
-    public function update(): void
+    /**
+     * @param UpdateUserDTO $updateUser
+     */
+    public function update(UpdateUserDTO $updateUser): void
     {
 
     }
