@@ -3,6 +3,11 @@
         <div class="nav-wrapper">
             <a href="{{ path('index') }}" class="brand-logo left">SocialIM</a>
             <ul id="nav-mobile" class="right">
+                <li class="active">
+                    <a href="{{ path('index') }}" title="Home">
+                        <i class="material-icons">home</i>
+                    </a>
+                </li>
                 {% if is_granted('ROLE_ADMIN') %}
                     <li>
                         <a href="{{ path('user_list') }}" title="Users">

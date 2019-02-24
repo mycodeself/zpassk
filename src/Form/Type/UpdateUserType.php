@@ -5,6 +5,7 @@ namespace App\Form\Type;
 use App\Service\DTO\UpdateUserDTO;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,6 +19,9 @@ class UpdateUserType extends AbstractType
             ->add('email', EmailType::class, [
             ])
             ->add('newPassword', PasswordType::class,[
+                'required' => false,
+            ])
+            ->add('enabled', CheckboxType::class, [
                 'required' => false,
             ])
         ;

@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Exception\InvalidRoleException;
+use App\Exception\UserAlreadyExistsException;
 use App\Form\Type\UpdateUserType;
+use App\Form\Type\UserType;
 use App\Repository\UserRepositoryInterface;
 use App\Service\DTO\UpdateUserDTO;
 use App\Service\UserService;
@@ -28,6 +31,35 @@ class UserController extends AbstractController
 
         return $this->render('user/user_list.html.twig', [
             'users' => $users
+        ]);
+    }
+
+    /**
+     * @Route(path="/users/create", name="user_create")
+     *
+     * @param Request $request
+     * @param UserService $userService
+     * @return Response
+     */
+    public function create(Request $request, UserService $userService): Response
+    {
+        $form = $this->createForm(UserType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            try {
+                $userService->create($data);
+                $this->addFlash('success', 'The user has been created.');
+            } catch (InvalidRoleException $e) {
+            } catch (UserAlreadyExistsException $e) {
+            }
+
+            return $this->redirectToRoute('user_list');
+        }
+
+        return $this->render('user/user_create.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 

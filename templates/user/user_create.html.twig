@@ -1,28 +1,31 @@
 {% extends 'layout.html.twig' %}
-{% block title %}SocialIM :: Users{% endblock %}
+{% block title %}SocialIM :: Create user{% endblock %}
 
 {% block main %}
     <header>
-        <h2 class="header">{{ user }}</h2>
+        <h2 class="header">Add user</h2>
     </header>
     {% include '_partials/_breadcrumb.html.twig' with {items: {
         'user_list': 'Users',
-        '#': 'Edit user: ' ~ user
+        '#': 'Add user'
     }} %}
+
     <div class="card">
         <div class="card-content">
         {{ form_start(form) }}
         {{ form_errors(form) }}
         <div class="switch right-align">
             <label>
-                Disabled
-                {{ form_widget(form.enabled) }}
+                User
+                {{ form_widget(form.isAdmin) }}
                 <span class="lever"></span>
-                Enabled
+                Admin
             </label>
         </div>
+
+        {{ form_row(form.username) }}
         {{ form_row(form.email) }}
-        {{ form_row(form.newPassword) }}
+        {{ form_row(form.plainPassword) }}
 
         {{ form_rest(form) }}
 

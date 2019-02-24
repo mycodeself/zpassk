@@ -1,0 +1,10 @@
+<nav>
+    <div class="nav-wrapper">
+        <div class="col s12">
+            <a href="{{ path('index') }}" class="breadcrumb"><i class="material-icons">home</i></a>
+            {%- for pathName,text in items -%}
+                <a href="{{ pathName != "#" ? path(pathName) : '#' }}" class="breadcrumb">{{ text }}</a>
+            {%- endfor -%}
+        </div>
+    </div>
+</nav>

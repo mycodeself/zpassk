@@ -21,6 +21,11 @@ class UpdateUserDTO
     private $email;
 
     /**
+     * @var bool
+     */
+    private $enabled;
+
+    /**
      * @var string
      * @Assert\Length(min=8, max=150)
      */
@@ -31,10 +36,11 @@ class UpdateUserDTO
      * @param int $id
      * @param string $email
      */
-    public function __construct(int $id, string $email, string $newPassword = '')
+    public function __construct(int $id, string $email, bool $enabled, string $newPassword = '')
     {
         $this->id = $id;
         $this->email = $email;
+        $this->enabled = $enabled;
         $this->newPassword = $newPassword;
     }
 
@@ -87,10 +93,22 @@ class UpdateUserDTO
     }
 
     /**
+     * @param bool $enabled
+     */
+    public function setEnabled(bool $enabled): void
+    {
+        $this->enabled = $enabled;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+    /**
      * @return UpdateUserDTO
      */
     public static function fromUser(User $user): self
     {
-        return new self($user->getId(), $user->getEmail());
+        return new self($user->getId(), $user->getEmail(), $user->isEnabled());
     }
 }
