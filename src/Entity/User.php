@@ -175,6 +175,14 @@ class User
     }
 
     /**
+     * @param string $email
+     */
+    public function changeEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    /**
      * @throws \Exception
      */
     public function requestNewPassword(): void

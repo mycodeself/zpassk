@@ -16,6 +16,10 @@ html, body {
 
 .cursor { cursor: pointer;}
 
+label.required:before {
+  content: "* ";
+}
+
 @import "materialize/all";
 
 @import "pages/security";

@@ -5,11 +5,23 @@
     {%- if help is not empty -%}
         {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
     {%- endif -%}
+    {# Append validate class #}
+    {%- set widget_attr = widget_attr|merge({attr: {'class': "validate"}}) -%}
+    {%- if not form.vars.valid -%}
+        {%- set widget_attr = widget_attr|merge({attr: {'class': "invalid"}}) -%}
+    {%- endif -%}
     <div>
-        {{- form_errors(form) -}}
         <div class="input-field">
+            {% if beforeWidgetHtml is defined %}
+                {{- beforeWidgetHtml|raw -}}
+            {% endif %}
             {{- form_widget(form, widget_attr) -}}
             {{- form_label(form) -}}
+            {%- if not form.vars.valid -%}
+                <span class="helper-text red-text">
+                    {{- form_errors(form) -}}
+                </span>
+            {%- endif -%}
         </div>
         {{- form_help(form) -}}
     </div>

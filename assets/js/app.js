@@ -18,8 +18,8 @@ flashMessages.forEach(flash => {
 const editEmailBtn = document.getElementById('js-edit-email');
 if(editEmailBtn) {
   const emailField = document.getElementById('update_user_email');
-    editEmailBtn.addEventListener('click', function() {
+  emailField.disabled = true;
+  editEmailBtn.addEventListener('click', function() {
     emailField.disabled = false;
-
   })
 }

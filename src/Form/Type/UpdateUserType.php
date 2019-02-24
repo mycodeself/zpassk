@@ -16,7 +16,6 @@ class UpdateUserType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'disabled' => true,
             ])
             ->add('newPassword', PasswordType::class,[
                 'required' => false,

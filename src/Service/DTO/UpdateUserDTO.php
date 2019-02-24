@@ -22,6 +22,7 @@ class UpdateUserDTO
 
     /**
      * @var string
+     * @Assert\Length(min=8, max=150)
      */
     private $newPassword;
 

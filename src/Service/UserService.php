@@ -34,9 +34,25 @@ class UserService
 
     /**
      * @param UpdateUserDTO $updateUser
+     * @throws UserNotFoundException
      */
     public function update(UpdateUserDTO $updateUser): void
     {
+        $save = false;
+        $user = $this->userRepository->getById($updateUser->getId());
+        if($user->getEmail() !== $updateUser->getEmail()) {
+            $user->changeEmail($updateUser->getEmail());
+            $save = true;
+        }
+
+        if(!empty($updateUser->getNewPassword())) {
+            $user->changePassword($updateUser->getNewPassword());
+            $save = true;
+        }
+
+        if($save) {
+            $this->userRepository->save($user);
+        }
 
     }
 
