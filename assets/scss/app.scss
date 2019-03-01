@@ -22,10 +22,8 @@ label.required:before {
   content: "* ";
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+.nav__breadcrumb {
+  padding-left: 24px;
 }
 
 @import "materialize/all";
@@ -33,5 +31,7 @@ label.required:before {
 @import "pages/security";
 
 @import "components/flash_messages";
+@import "components/file_input";
 
+@import "layout/header";
 

@@ -33,6 +33,13 @@ services:
     App\Repository\UserRepositoryInterface:
         alias: App\Doctrine\Repository\UserRepository
 
+    App\Doctrine\Repository\GroupRepository:
+        factory: ["@doctrine.orm.entity_manager", getRepository]
+        arguments:
+            - App\Entity\Group
+
+    App\Repository\GroupRepositoryInterface:
+        alias: App\Doctrine\Repository\GroupRepository
 
 ## SECURITY
     App\Security\UserProvider:
@@ -42,6 +49,10 @@ services:
     App\Security\AccessDeniedHandler:
         arguments:
             $router: '@router'
+
+    App\Security\LoggedInUserProvider:
+        arguments:
+            $tokenStorage: '@security.token_storage'
 
 
 ## APPLICATION SERVICES
@@ -54,6 +65,10 @@ services:
             $userRepository: '@App\Repository\UserRepositoryInterface'
             $mailSender: '@App\Mail\MailSender'
 
+    App\Service\GroupService:
+        arguments:
+            $groupRepository: '@App\Repository\GroupRepositoryInterface'
+            $loggedInUserProvider: '@App\Security\LoggedInUserProvider'
 
 ## MAIL
     App\Mail\MailSender:

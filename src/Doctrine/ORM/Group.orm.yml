@@ -1,7 +1,7 @@
 App\Entity\Group:
   type: entity
-  table: group
-#  repositoryClass: App\Doctrine\Repository\GroupRepository
+  table: "`group`"
+  repositoryClass: App\Doctrine\Repository\GroupRepository
   id:
     id:
       type: integer

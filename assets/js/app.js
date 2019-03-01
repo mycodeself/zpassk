@@ -23,3 +23,23 @@ if(editEmailBtn) {
     emailField.disabled = false;
   })
 }
+
+const imageInputs = document.getElementsByClassName('image-input');
+if(imageInputs) {
+  for(i = 0; i < imageInputs.length; i++) {
+    imageInputs[i].addEventListener('change', function (event)  {
+      var reader = new FileReader();
+      reader.readAsDataURL(event.target.files[0]);
+      reader.onload = function(e) {
+        const input = document.getElementById(event.target.id);
+        const imagePreview = input.nextElementSibling;
+        imagePreview.innerHTML = '';
+        const imageNode = document.createElement('IMG');
+        imageNode.setAttribute('src', e.target.result);
+        imageNode.setAttribute('width', 110);
+        imageNode.setAttribute('height', 110);
+        imagePreview.appendChild(imageNode);
+      }
+    })
+  }
+}
