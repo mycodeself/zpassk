@@ -17,7 +17,7 @@ interface GroupRepositoryInterface
      * @param int $id
      * @return Group
      */
-    public function findById(int $id): Group;
+    public function findById(int $id): ?Group;
 
     /**
      * @param int $id

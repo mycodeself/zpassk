@@ -14,6 +14,7 @@
                     <figure class="groups-list__item__image">
                     </figure>
                     <span class="groups-list__item__name">{{ group }}</span>
+                    <a href="{{ path('group_update', {id: group.id }) }}">Edit</a>
                 </li>
         {% endfor %}
         </ul>

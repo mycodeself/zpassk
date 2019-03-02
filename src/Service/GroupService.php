@@ -20,18 +20,27 @@ class GroupService
     private $loggedInUserProvider;
 
     /**
+     * @var GroupImageUploader
+     */
+    private $groupImageUploader;
+
+    /**
      * GroupService constructor.
      * @param GroupRepositoryInterface $groupRepository
      * @param LoggedInUserProvider $loggedInUserProvider
+     * @param GroupImageUploader $groupImageUploader
      */
     public function __construct(
         GroupRepositoryInterface $groupRepository,
-        LoggedInUserProvider $loggedInUserProvider
+        LoggedInUserProvider $loggedInUserProvider,
+        GroupImageUploader $groupImageUploader
     )
     {
         $this->groupRepository = $groupRepository;
         $this->loggedInUserProvider = $loggedInUserProvider;
+        $this->groupImageUploader = $groupImageUploader;
     }
+
 
     /**
      * @param GroupDTO $groupDTO
@@ -42,6 +51,26 @@ class GroupService
             $groupDTO->getName(),
             $this->loggedInUserProvider->getUser()
         );
+
+        if(!empty($groupDTO->getImage())) {
+            $this->groupImageUploader->uploadImageToGroup($groupDTO->getImage(), $group);
+        }
+
+        $this->groupRepository->save($group);
+    }
+
+    /**
+     * @param GroupDTO $groupDTO
+     */
+    public function update(GroupDTO $groupDTO): void
+    {
+        $group = $this->groupRepository->getById($groupDTO->getId());
+
+        if(!empty($groupDTO->getImage())) {
+            $this->groupImageUploader->uploadImageToGroup($groupDTO->getImage(), $group);
+        }
+
+        $group->setName($groupDTO->getName());
 
         $this->groupRepository->save($group);
     }

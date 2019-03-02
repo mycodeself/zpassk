@@ -23,7 +23,7 @@ class GroupRepository extends EntityRepository implements GroupRepositoryInterfa
      * @param int $id
      * @return Group
      */
-    public function findById(int $id): Group
+    public function findById(int $id): ?Group
     {
         /** @var Group $group */
         $group = $this->find($id);

@@ -1,0 +1,27 @@
+{% extends 'layout.html.twig' %}
+{% block title %}SocialIM :: Add identity{% endblock %}
+
+{% block main %}
+    <header class="header">
+        <h2 title="header__title">Add identity</h2>
+    </header>
+    {% include '_partials/_breadcrumb.html.twig' with {items: {
+        '#': 'Add identity'
+    }} %}
+
+    <div class="card">
+        <div class="card-content">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+
+            {{ form_widget(form) }}
+
+            {{ form_rest(form) }}
+
+            <button class="waves-effect waves-light btn" type="submit">Add</button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}

@@ -199,4 +199,13 @@ class User
         return $this->getUsername();
     }
 
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function equals(User $user): bool
+    {
+        return $this->getId() === $user->getId();
+    }
+
 }

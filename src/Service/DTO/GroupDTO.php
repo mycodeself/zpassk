@@ -2,6 +2,7 @@
 
 namespace App\Service\DTO;
 
+use App\Entity\Group;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -21,12 +22,7 @@ class GroupDTO
 
     /**
      * @var UploadedFile
-     * @Assert\Image(
-     *     minWidth = 100,
-     *     maxWidth = 400,
-     *     minHeight = 100,
-     *     maxHeight = 400
-     * )
+     * @Assert\Image()
      */
     private $image;
 
@@ -108,5 +104,21 @@ class GroupDTO
     public function setOwnerId(int $ownerId): void
     {
         $this->ownerId = $ownerId;
+    }
+
+    /**
+     * @param Group $group
+     * @return GroupDTO
+     */
+    public static function fromGroup(Group $group): self
+    {
+        $dto = new self(
+            $group->getName(),
+            $group->getOwner()->getId()
+        );
+
+        $dto->setId($group->getId());
+
+        return $dto;
     }
 }
