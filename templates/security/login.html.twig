@@ -8,7 +8,7 @@
                     {{ error.messageKey|trans(error.messageData, 'security') }}
                 </div>
             {% endif %}
-            <form class="login__form" action="{{ path('login') }}" method="post">
+            <form id="security_form" class="login__form" action="{{ path('login') }}" method="post">
 
                 <div class="input-field">
                     <i class="material-icons prefix">person</i>

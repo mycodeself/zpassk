@@ -11,13 +11,15 @@
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
-        "dev-server": "encore dev-server --host=0.0.0.0",
+        "dev-server": "encore dev-server --host=0.0.0.0 --disable-host-check",
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
     },
     "dependencies": {
         "jquery": "^3.3.1",
-        "materialize-css": "^1.0.0-rc.2"
+        "js-sha512": "^0.8.0",
+        "materialize-css": "^1.0.0-rc.2",
+        "openpgp": "^4.4.10"
     }
 }

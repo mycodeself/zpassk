@@ -20,6 +20,7 @@ class UpdateUserType extends AbstractType
             ])
             ->add('newPassword', PasswordType::class,[
                 'required' => false,
+                'attr' => ['id' => 'password'],
             ])
             ->add('enabled', CheckboxType::class, [
                 'required' => false,
@@ -42,6 +43,7 @@ class UpdateUserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UpdateUserDTO::class,
+            'attr' => ['id' => 'security_form']
         ]);
     }
 

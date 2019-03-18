@@ -1,17 +1,48 @@
-require('materialize-css/dist/js/materialize');
-require('../scss/app.scss');
+import 'materialize-css/dist/js/materialize';
+
+import '../scss/app.scss'
+import initializeFlashMessages from './flashMessages'
+
+import {securityFormListener} from "./formListeners";
+import openpgp from 'openpgp/dist/compat/openpgp'
+
+
 
 console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
 
+initializeFlashMessages();
 
-// flash_messages
-const flashMessages = document.querySelectorAll('.flash-message');
+const hash = sessionStorage.getItem('hash');
+if(hash) {
+  console.log(hash);
+	openpgp.initWorker({ path: '/openpgp/compat/openpgp.worker.js' })
 
-flashMessages.forEach(flash => {
-  setTimeout(() => {
-    flash.remove();
-  }, 3500);
-});
+	 const options = {
+		userIds: [{ name:'Jon Smith', email:'jon@example.com' }], // multiple user IDs
+		numBits: 4096,
+		passphrase: hash
+	};
+
+	console.log(options)
+
+	openpgp.generateKey(options).then(function(key) {
+		var privkey = key.privateKeyArmored; // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
+		var pubkey = key.publicKeyArmored;   // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
+		var revocationCertificate = key.revocationCertificate; // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
+    console.log(privkey);
+    console.log(pubkey);
+	}).catch(function(error) {
+		console.log(error)
+	});
+
+}
+
+
+const securityForm = document.getElementById('security_form');
+if(securityForm) {
+	securityForm.addEventListener('submit', securityFormListener)
+}
+
 
 
 // update_user_email
@@ -26,7 +57,7 @@ if(editEmailBtn) {
 
 const imageInputs = document.getElementsByClassName('image-input');
 if(imageInputs) {
-  for(i = 0; i < imageInputs.length; i++) {
+  for(let i = 0; i < imageInputs.length; i++) {
     imageInputs[i].addEventListener('change', function (event)  {
       var reader = new FileReader();
       reader.readAsDataURL(event.target.files[0]);

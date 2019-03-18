@@ -21,6 +21,7 @@ class ChangePasswordType extends AbstractType
                 'type' => PasswordType::class,
                 'required' => true,
                 'invalid_message' => 'The password fields must match.',
+                'attr' => ['id' => 'password']
             ])
         ;
 
@@ -40,6 +41,7 @@ class ChangePasswordType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ChangePasswordWithTokenDTO::class,
+            'attr' => ['id' => 'security_form']
         ]);
     }
 

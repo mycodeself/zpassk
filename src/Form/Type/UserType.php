@@ -23,7 +23,8 @@ class UserType extends AbstractType
             ])
             ->add('email', EmailType::class)
             ->add('plainPassword', PasswordType::class, [
-                'label' => 'Password'
+                'label' => 'Password',
+                'attr' => ['id' => 'password']
             ])
             ->add('isAdmin', CheckboxType::class, [
                 'required' => false,
@@ -35,6 +36,7 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UserDTO::class,
+            'attr' => ['id' => 'security_form'],
             'empty_data' => function (FormInterface $form) {
                 return new UserDTO(
                     $form->get('username')->getData() ?: '',
