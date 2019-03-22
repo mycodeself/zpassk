@@ -1,49 +1,13 @@
 import 'materialize-css/dist/js/materialize';
-
+import 'babel-polyfill'
 import '../scss/app.scss'
 import initializeFlashMessages from './flashMessages'
-
-import {securityFormListener} from "./formListeners";
-import openpgp from 'openpgp/dist/compat/openpgp'
-
-
-
-console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
+import {addFormListeners} from "./formListeners";
+import openpgp from 'openpgp'
 
 initializeFlashMessages();
-
-const hash = sessionStorage.getItem('hash');
-if(hash) {
-  console.log(hash);
-	openpgp.initWorker({ path: '/openpgp/compat/openpgp.worker.js' })
-
-	 const options = {
-		userIds: [{ name:'Jon Smith', email:'jon@example.com' }], // multiple user IDs
-		numBits: 4096,
-		passphrase: hash
-	};
-
-	console.log(options)
-
-	openpgp.generateKey(options).then(function(key) {
-		var privkey = key.privateKeyArmored; // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
-		var pubkey = key.publicKeyArmored;   // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
-		var revocationCertificate = key.revocationCertificate; // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
-    console.log(privkey);
-    console.log(pubkey);
-	}).catch(function(error) {
-		console.log(error)
-	});
-
-}
-
-
-const securityForm = document.getElementById('security_form');
-if(securityForm) {
-	securityForm.addEventListener('submit', securityFormListener)
-}
-
-
+addFormListeners();
+openpgp.initWorker({ path:'/openpgp/compat/openpgp.worker.min.js' })
 
 // update_user_email
 const editEmailBtn = document.getElementById('js-edit-email');

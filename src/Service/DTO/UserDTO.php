@@ -28,7 +28,6 @@ class UserDTO
      */
     private $plainPassword;
 
-
     /**
      * @var bool
      */

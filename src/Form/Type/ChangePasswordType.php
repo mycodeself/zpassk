@@ -41,7 +41,7 @@ class ChangePasswordType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ChangePasswordWithTokenDTO::class,
-            'attr' => ['id' => 'security_form']
+            'attr' => ['id' => 'recovery_password_form']
         ]);
     }
 

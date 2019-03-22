@@ -32,6 +32,16 @@ class UpdateUserDTO
     private $newPassword;
 
     /**
+     * @var string
+     */
+    private $privateKey;
+
+    /**
+     * @var string
+     */
+    private $publicKey;
+
+    /**
      * UpdateUserDTO constructor.
      * @param int $id
      * @param string $email
@@ -42,6 +52,8 @@ class UpdateUserDTO
         $this->email = $email;
         $this->enabled = $enabled;
         $this->newPassword = $newPassword;
+        $this->privateKey = '';
+        $this->publicKey = '';
     }
 
     /**
@@ -104,6 +116,41 @@ class UpdateUserDTO
     {
         return $this->enabled;
     }
+
+    /**
+     * @return string
+     */
+    public function getPrivateKey(): string
+    {
+        return $this->privateKey;
+    }
+
+    /**
+     * @param string $privateKey
+     */
+    public function setPrivateKey(string $privateKey): void
+    {
+        $this->privateKey = $privateKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublicKey(): string
+    {
+        return $this->publicKey;
+    }
+
+    /**
+     * @param string $publicKey
+     */
+    public function setPublicKey(string $publicKey): void
+    {
+        $this->publicKey = $publicKey;
+    }
+
+
+
     /**
      * @return UpdateUserDTO
      */

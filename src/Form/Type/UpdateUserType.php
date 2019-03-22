@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -25,6 +26,8 @@ class UpdateUserType extends AbstractType
             ->add('enabled', CheckboxType::class, [
                 'required' => false,
             ])
+            ->add('privateKey', HiddenType::class)
+            ->add('publicKey', HiddenType::class)
         ;
 
         // hack to avoid returning null when no values was send
@@ -43,7 +46,7 @@ class UpdateUserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UpdateUserDTO::class,
-            'attr' => ['id' => 'security_form']
+            'attr' => ['id' => 'update_user_form']
         ]);
     }
 
