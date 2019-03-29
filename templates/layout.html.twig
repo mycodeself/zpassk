@@ -1,13 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
     {% include('_partials/_nav.html.twig') %}
 
     <div class="container">
-    <main>
+        <main>
             {% block main %}
             {% endblock %}
-    </main>
+        </main>
+    </div>
+    <div>
+        <input type="hidden" name="pub_key" id="pub_key" value="{{ app.user.user.keypair.publicKey }}"/>
+        <input type="hidden" name="prv_key" id="prv_key" value="{{ app.user.user.keypair.privateKey }}" />
     </div>
 {% endblock %}

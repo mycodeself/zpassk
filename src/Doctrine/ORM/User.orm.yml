@@ -39,3 +39,6 @@ App\Entity\User:
     password:
       columnPrefix: false
       class: App\Entity\ValueObject\PasswordEncoded
+    keyPair:
+      columnPrefix: false
+      class: App\Entity\ValueObject\KeyPair

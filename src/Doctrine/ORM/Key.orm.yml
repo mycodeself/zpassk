@@ -1,0 +1,19 @@
+App\Entity\Key:
+  type: entity
+  table: key
+#  repositoryClass: App\Doctrine\Repository\PasswordRepository
+  id:
+    user:
+      associationKey: true
+    password:
+      associationKey: true
+
+  fields:
+    value:
+      type: text
+
+  manyToOne:
+    user:
+      targetEntity: App\Entity\User
+    password:
+      targetEntity: App\Entity\Password

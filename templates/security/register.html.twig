@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <main class="container login-wrapper">
+        <div class="login__box z-depth-2">
+            {{ form_start(form, {'attr': {'class': 'login__form'} }) }}
+            <div class="login__errors">
+                {{ form_errors(form) }}
+            </div>
+            {{ form_rest(form) }}
+            <button class="waves-effect waves-light btn" type="submit">Register</button>
+            {{ form_end(form) }}
+            <div class="login__box__footer center-align">
+                <small>
+                    <a href="{{ path('login') }}">
+                        Back
+                    </a>
+                </small>
+            </div>
+        </div>
+    </main>
+{% endblock %}

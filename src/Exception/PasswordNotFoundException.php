@@ -2,9 +2,9 @@
 
 namespace App\Exception;
 
-class GroupNotFoundException extends \Exception
+class PasswordNotFoundException extends \Exception
 {
-    private const MESSAGE = 'The group with id %s was not found';
+    private const MESSAGE = 'The identity with id %s was not found';
 
     public function __construct(int $id)
     {

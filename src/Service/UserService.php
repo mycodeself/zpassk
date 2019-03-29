@@ -4,6 +4,7 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Entity\ValueObject\KeyPair;
 use App\Entity\ValueObject\PasswordEncoded;
 use App\Exception\UserAlreadyExistsException;
 use App\Exception\UserNotFoundException;
@@ -44,12 +45,12 @@ class UserService
 
         $password = new PasswordEncoded($userDTO->getPlainPassword());
         $roles = $userDTO->isAdmin() ? ['ROLE_ADMIN'] : ['ROLE_USER'];
+        $keyPair = new KeyPair($userDTO->getPrivateKey(), $userDTO->getPublicKey());
 
-        $user = new User($userDTO->getUsername(), $userDTO->getEmail(), $password, $roles);
+        $user = new User($userDTO->getUsername(), $userDTO->getEmail(), $password, $roles, $keyPair);
 
         $this->userRepository->save($user);
     }
-
 
     /**
      * @param UpdateUserDTO $updateUser

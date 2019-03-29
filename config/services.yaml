@@ -1,7 +1,6 @@
 parameters:
     locale: 'en'
     mail.default_from: 'draftee@gmail.com'
-    group.upload_dir: '%kernel.root_dir%/../public/uploads'
 
 services:
     # default configuration for services in *this* file
@@ -34,21 +33,13 @@ services:
     App\Repository\UserRepositoryInterface:
         alias: App\Doctrine\Repository\UserRepository
 
-    App\Doctrine\Repository\GroupRepository:
+    App\Doctrine\Repository\PasswordRepository:
         factory: ["@doctrine.orm.entity_manager", getRepository]
         arguments:
-            - App\Entity\Group
+            - App\Entity\Password
 
-    App\Repository\GroupRepositoryInterface:
-        alias: App\Doctrine\Repository\GroupRepository
-
-    App\Doctrine\Repository\IdentityRepository:
-        factory: ["@doctrine.orm.entity_manager", getRepository]
-        arguments:
-            - App\Entity\Identity
-
-    App\Repository\IdentityRepositoryInterface:
-        alias: App\Doctrine\Repository\IdentityRepository
+    App\Repository\PasswordRepositoryInterface:
+        alias: App\Doctrine\Repository\PasswordRepository
 
 ## SECURITY
     App\Security\UserProvider:
@@ -73,16 +64,6 @@ services:
         arguments:
             $userRepository: '@App\Repository\UserRepositoryInterface'
             $mailSender: '@App\Mail\MailSender'
-
-    App\Service\GroupService:
-        arguments:
-            $groupRepository: '@App\Repository\GroupRepositoryInterface'
-            $loggedInUserProvider: '@App\Security\LoggedInUserProvider'
-            $groupImageUploader: '@App\Service\GroupImageUploader'
-
-    App\Service\GroupImageUploader:
-        arguments:
-            $directory: '%group.upload_dir%'
 
 ## MAIL
     App\Mail\MailSender:

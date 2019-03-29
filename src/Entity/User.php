@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\ValueObject\KeyPair;
 use App\Entity\ValueObject\PasswordEncoded;
 use App\Exception\InvalidRoleException;
 use DateTimeInterface;
@@ -54,6 +55,11 @@ class User
     private $roles;
 
     /**
+     * @var KeyPair
+     */
+    private $keyPair;
+
+    /**
      * User constructor.
      * @param string $username
      * @param string $email
@@ -61,13 +67,14 @@ class User
      * @param array $roles
      * @throws InvalidRoleException
      */
-    public function __construct(string $username, string $email, PasswordEncoded $password, array $roles)
+    public function __construct(string $username, string $email, PasswordEncoded $password, array $roles, KeyPair $keyPair)
     {
         $this->username = $username;
         $this->email = $email;
         $this->password = $password;
         $this->enabled = true;
         $this->setRoles($roles);
+        $this->keyPair = $keyPair;
     }
 
     /**
@@ -163,6 +170,14 @@ class User
     public function enable(): void
     {
         $this->enabled = true;
+    }
+
+    /**
+     * @return KeyPair
+     */
+    public function keyPair(): KeyPair
+    {
+        return $this->keyPair;
     }
 
     /**

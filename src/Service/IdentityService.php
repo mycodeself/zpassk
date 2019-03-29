@@ -2,9 +2,9 @@
 
 namespace App\Service;
 
-use App\Entity\Identity;
+use App\Entity\Password;
 use App\Repository\GroupRepositoryInterface;
-use App\Repository\IdentityRepositoryInterface;
+use App\Repository\PasswordRepositoryInterface;
 use App\Security\LoggedInUserProvider;
 use App\Service\DTO\IdentityDTO;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
@@ -12,7 +12,7 @@ use Symfony\Component\Finder\Exception\AccessDeniedException;
 class IdentityService
 {
     /**
-     * @var IdentityRepositoryInterface
+     * @var PasswordRepositoryInterface
      */
     private $identityRepository;
 
@@ -28,12 +28,12 @@ class IdentityService
 
     /**
      * IdentityService constructor.
-     * @param IdentityRepositoryInterface $identityRepository
+     * @param PasswordRepositoryInterface $identityRepository
      * @param GroupRepositoryInterface $groupRepository
      * @param LoggedInUserProvider $loggedInUserProvider
      */
     public function __construct(
-        IdentityRepositoryInterface $identityRepository,
+        PasswordRepositoryInterface $identityRepository,
         GroupRepositoryInterface $groupRepository,
         LoggedInUserProvider $loggedInUserProvider
     )
@@ -51,7 +51,7 @@ class IdentityService
             throw new AccessDeniedException('Only the owner of the group can create identities on it.');
         }
 
-        $identity = new Identity(
+        $identity = new Password(
             $identityDTO->getUsername(),
             $identityDTO->getPassword(),
             $group

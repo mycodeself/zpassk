@@ -2,12 +2,12 @@
 
 namespace App\Doctrine\Repository;
 
-use App\Entity\Identity;
-use App\Exception\IdentityNotFoundException;
-use App\Repository\IdentityRepositoryInterface;
+use App\Entity\Password;
+use App\Exception\PasswordNotFoundException;
+use App\Repository\PasswordRepositoryInterface;
 use Doctrine\ORM\EntityRepository;
 
-class IdentityRepository extends EntityRepository implements IdentityRepositoryInterface
+class PasswordRepository extends EntityRepository implements PasswordRepositoryInterface
 {
 
     public function findAll(): array
@@ -15,26 +15,26 @@ class IdentityRepository extends EntityRepository implements IdentityRepositoryI
         return parent::findAll();
     }
 
-    public function findById(int $id): ?Identity
+    public function findById(int $id): ?Password
     {
-        /** @var Identity|null $identity */
+        /** @var Password|null $identity */
         $identity = $this->find($id);
 
         return $identity;
     }
 
-    public function getById(int $id): Identity
+    public function getById(int $id): Password
     {
         $identity = $this->findById($id);
 
         if(empty($identity)) {
-            throw new IdentityNotFoundException($id);
+            throw new PasswordNotFoundException($id);
         }
 
         return $identity;
     }
 
-    public function save(Identity $group): void
+    public function save(Password $group): void
     {
         $entityManager = $this->getEntityManager();
         $entityManager->persist($group);

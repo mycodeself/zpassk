@@ -1,0 +1,9 @@
+App\Entity\ValueObject\KeyPair:
+  type: embeddable
+  fields:
+    privateKey:
+      type: text
+      nullable: false
+    publicKey:
+      type: text
+      nullable: false

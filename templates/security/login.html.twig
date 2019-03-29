@@ -3,12 +3,17 @@
 {% block body %}
     <main class="container login-wrapper">
         <div class="login__box z-depth-2">
+            <div class="right-align">
+                <a href="{{ path('register') }}">
+                    Create an account
+                </a>
+            </div>
             {% if error %}
                 <div class="login__errors">
                     {{ error.messageKey|trans(error.messageData, 'security') }}
                 </div>
             {% endif %}
-            <form id="security_form" class="login__form" action="{{ path('login') }}" method="post">
+            <form id="login_form" class="login__form" action="{{ path('login') }}" method="post">
 
                 <div class="input-field">
                     <i class="material-icons prefix">person</i>
@@ -33,11 +38,11 @@
                 <button class="waves-effect waves-light btn" type="submit">login</button>
             </form>
             <div class="login__box__footer center-align">
-                <small>
-                    <a href="{{ path('recovery_password') }}">
-                        Forgot your username/password?
-                    </a>
-                </small>
+                <p><small>
+                        <a href="{{ path('recovery_password') }}">
+                            Forgot your username/password?
+                        </a>
+                    </small></p>
             </div>
         </div>
     </main>

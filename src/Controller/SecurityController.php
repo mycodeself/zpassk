@@ -2,12 +2,17 @@
 
 namespace App\Controller;
 
+use App\Exception\InvalidRoleException;
+use App\Exception\UserAlreadyExistsException;
 use App\Exception\UserNotFoundException;
 use App\Form\Type\ChangePasswordType;
 use App\Form\Type\RecoveryPasswordType;
+use App\Form\Type\UserType;
 use App\Repository\UserRepositoryInterface;
 use App\Service\DTO\ChangePasswordWithTokenDTO;
+use App\Service\DTO\UserDTO;
 use App\Service\SecurityService;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +21,34 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
+    /**
+     * @Route("/login/register", name="register")
+     */
+    public function register(Request $request, UserService $userService): Response
+    {
+        $form = $this->createForm(UserType::class);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            /** @var UserDTO $userDto */
+            $userDto = $form->getData();
+            try {
+                $userService->create($userDto);
+                $message = sprintf('Hello %s, your user has been created', $userDto->getUsername());
+                $this->addFlash('success', $message);
+                return $this->redirectToRoute('login');
+            } catch (InvalidRoleException $e) {
+                $this->addFlash('error', 'An error has occurred, try again later');
+            } catch (UserAlreadyExistsException $e) {
+                $this->addFlash('error', 'Username is not available');
+            }
+        }
+
+        return $this->render('security/register.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
 
     /**
      * @Route("/login", name="login")
