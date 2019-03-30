@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\PasswordKeyRepositoryInterface;
+use App\Security\AuthUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,12 +16,18 @@ class IndexController extends AbstractController
      *
      * @return Response
      */
-    public function index(): Response
+    public function index(PasswordKeyRepositoryInterface $passwordKeyRepository): Response
     {
-        $groups = [];
+        /** @var AuthUser $authUser */
+        $authUser = $this->getUser();
+        $user = $authUser->getUser();
+
+        $ownPasswords = $passwordKeyRepository->findAllByOwner($user);
+        $sharedPasswords = $passwordKeyRepository->findSharedForUser($user);
 
         return $this->render('index.html.twig', [
-            'groups' => $groups
+            'ownPasswords' => $ownPasswords,
+            'sharedPasswords' => $sharedPasswords,
         ]);
     }
 

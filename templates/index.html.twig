@@ -1,5 +1,43 @@
 {% extends 'layout.html.twig' %}
 
 {% block main %}
+    <a href="{{ path('password_create') }}" class="waves-effect waves-light btn">
+        <i class="material-icons right">lock</i> Add password
+    </a>
+
+    <h4>own passwords</h4>
+    <ul>
+    {% for passwordKey in ownPasswords %}
+            <li>
+                {{ passwordKey }}
+                <button
+                        type="button"
+                        class="js-view-password-btn btn btn-small"
+                        data-name="{{ passwordKey.password.name }}"
+                        data-url="{{ passwordKey.password.url }}"
+                        data-k="{{ passwordKey.key }}"
+                        data-u="{{ passwordKey.password.username }}"
+                        data-p="{{ passwordKey.password.password }}"
+                >
+                    View
+                </button>
+            </li>
+    {% endfor %}
+    </ul>
+
+    {% if sharedPasswords %}
+        <h4>shared passwords</h4>
+        <ul>
+            {% for passwordKey in sharedPasswords %}
+                <li
+                        data-k="{{ passwordKey.key }}"
+                        data-u="{{ passwordKey.password.username }}"
+                        data-p="{{ passwordKey.password.password }}"
+                >
+                    {{ passwordKey }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
 {% endblock %}

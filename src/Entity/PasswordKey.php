@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-class Key
+class PasswordKey
 {
     /**
      * @var int
@@ -22,19 +22,19 @@ class Key
     /**
      * @var string
      */
-    private $value;
+    private $key;
 
     /**
-     * Key constructor.
+     * PasswordKey constructor.
      * @param User $user
      * @param Password $password
-     * @param string $value
+     * @param string $key
      */
-    public function __construct(User $user, Password $password, string $value)
+    public function __construct(User $user, Password $password, string $key)
     {
         $this->user = $user;
         $this->password = $password;
-        $this->value = $value;
+        $this->key = $key;
     }
 
     /**
@@ -64,9 +64,15 @@ class Key
     /**
      * @return string
      */
-    public function getValue(): string
+    public function getKey(): string
     {
-        return $this->value;
+        return $this->key;
     }
+
+    public function __toString(): string
+    {
+        return $this->password->getName() . ' - ' . $this->password->getUrl();
+    }
+
 
 }

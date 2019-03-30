@@ -99,4 +99,11 @@ class Password
         return $this->owner;
     }
 
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
 }

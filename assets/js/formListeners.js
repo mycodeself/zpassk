@@ -1,14 +1,14 @@
-import {sha512AndSplit} from "./utils";
-import openpgp, {message} from 'openpgp'
+import {encryptCredentials, sha512AndSplit} from "./crypto";
+import openpgp, {crypto} from 'openpgp'
 
 export function addFormListeners() {
 	addFormSubmitListener('login_form', loginFormListener);
 	addFormSubmitListener('recovery_password_form', recoveryPasswordFormListener);
 	addFormSubmitListener('update_user_form', updateUserFormListener);
 	addFormSubmitListener('user_form', registerUserFormListener);
+	addFormSubmitListener('password_form', addPasswordFormListener)
 
 	updateUserEditEmailListener();
-	imageInputsListener();
 }
 
 function loginFormListener(event) {
@@ -47,15 +47,8 @@ function registerUserFormListener(event) {
 	};
 
 	openpgp.generateKey(options).then(function(key) {
-		const privkey = btoa(key.privateKeyArmored);  //b64 '-----BEGIN PGP PRIVATE KEY BLOCK ... '
-		const pubkey = btoa(key.publicKeyArmored);   //b64 '-----BEGIN PGP PUBLIC KEY BLOCK ... '
-
-		console.log(atob(privkey));
-		console.log(atob(pubkey));
-
-
-		publicKeyInput.value = privkey;
-		privateKeyInput.value = pubkey;
+		publicKeyInput.value = btoa(key.publicKeyArmored);
+		privateKeyInput.value = btoa(key.privateKeyArmored);
 		firstPasswordInput.value = hashParts[0];
 		secondPasswordInput.value = hashParts[0];
 		event.target.submit();
@@ -98,19 +91,6 @@ function updateUserFormListener(event) {
 
 }
 
-function securityFormListener(event) {
-	event.preventDefault();
-	const passwordInput = document.querySelector('input[type=password]');
-
-	if(passwordInput) {
-		const hashParts = sha512AndSplit(passwordInput.value);
-		console.log(hashParts[0]);
-		passwordInput.value = hashParts[0];
-		sessionStorage.setItem('hash', hashParts[1]);
-		event.target.submit();
-	}
-}
-
 function recoveryPasswordFormListener(event) {
 	event.preventDefault();
 	const first = document.getElementById('change_password_newPassword_first');
@@ -122,6 +102,30 @@ function recoveryPasswordFormListener(event) {
 		second.value = hashParts[0];
 	}
 	event.target.submit();
+}
+
+function addPasswordFormListener(event) {
+	event.preventDefault();
+
+	const nameInput = document.getElementById('password_form_name');
+	const usernameInput = document.getElementById('password_form_username');
+	const passwordInput = document.getElementById('password_form_password');
+	const urlInput = document.getElementById('password_form_url');
+	const keyInput = document.getElementById('password_form_key');
+
+	crypto.random.getRandomBytes(32).then(key => {
+		console.log(key);
+
+		encryptCredentials(key, usernameInput.value, passwordInput.value).then(data => {
+			console.log(data);
+
+			usernameInput.value = data.username;
+			passwordInput.value = data.password;
+			keyInput.value = data.key;
+			event.target.submit();
+		})
+
+	});
 }
 
 function addFormSubmitListener(formId, listener) {
@@ -141,26 +145,3 @@ function updateUserEditEmailListener() {
 		})
 	}
 }
-
-function imageInputsListener() {
-	const imageInputs = document.getElementsByClassName('image-input');
-	if(imageInputs) {
-		for(let i = 0; i < imageInputs.length; i++) {
-			imageInputs[i].addEventListener('change', function (event)  {
-				var reader = new FileReader();
-				reader.readAsDataURL(event.target.files[0]);
-				reader.onload = function(e) {
-					const input = document.getElementById(event.target.id);
-					const imagePreview = input.nextElementSibling;
-					imagePreview.innerHTML = '';
-					const imageNode = document.createElement('IMG');
-					imageNode.setAttribute('src', e.target.result);
-					imageNode.setAttribute('width', 110);
-					imageNode.setAttribute('height', 110);
-					imagePreview.appendChild(imageNode);
-				}
-			})
-		}
-	}
-}
-

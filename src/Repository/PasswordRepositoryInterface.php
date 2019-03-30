@@ -12,5 +12,5 @@ interface PasswordRepositoryInterface
 
     public function getById(int $id): Password;
 
-    public function save(Password $group): void;
+    public function save(Password $password): void;
 }

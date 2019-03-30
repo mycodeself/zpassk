@@ -10,11 +10,18 @@ use Doctrine\ORM\EntityRepository;
 class PasswordRepository extends EntityRepository implements PasswordRepositoryInterface
 {
 
+    /**
+     * @return array
+     */
     public function findAll(): array
     {
         return parent::findAll();
     }
 
+    /**
+     * @param int $id
+     * @return Password|null
+     */
     public function findById(int $id): ?Password
     {
         /** @var Password|null $identity */
@@ -23,21 +30,31 @@ class PasswordRepository extends EntityRepository implements PasswordRepositoryI
         return $identity;
     }
 
+    /**
+     * @param int $id
+     * @return Password
+     * @throws PasswordNotFoundException
+     */
     public function getById(int $id): Password
     {
-        $identity = $this->findById($id);
+        $password = $this->findById($id);
 
-        if(empty($identity)) {
+        if(empty($password)) {
             throw new PasswordNotFoundException($id);
         }
 
-        return $identity;
+        return $password;
     }
 
-    public function save(Password $group): void
+    /**
+     * @param Password $password
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function save(Password $password): void
     {
         $entityManager = $this->getEntityManager();
-        $entityManager->persist($group);
+        $entityManager->persist($password);
         $entityManager->flush();
     }
 }

@@ -41,6 +41,14 @@ services:
     App\Repository\PasswordRepositoryInterface:
         alias: App\Doctrine\Repository\PasswordRepository
 
+    App\Doctrine\Repository\PasswordKeyRepository:
+        factory: ["@doctrine.orm.entity_manager", getRepository]
+        arguments:
+            - App\Entity\PasswordKey
+
+    App\Repository\PasswordKeyRepositoryInterface:
+        alias: App\Doctrine\Repository\PasswordKeyRepository
+
 ## SECURITY
     App\Security\UserProvider:
         arguments:
@@ -64,6 +72,12 @@ services:
         arguments:
             $userRepository: '@App\Repository\UserRepositoryInterface'
             $mailSender: '@App\Mail\MailSender'
+
+    App\Service\Passwordservice:
+        arguments:
+            $passwordKeyRepository: '@App\Repository\PasswordKeyRepositoryInterface'
+            $loggedInUserProvider: '@App\Security\LoggedInUserProvider'
+
 
 ## MAIL
     App\Mail\MailSender:
