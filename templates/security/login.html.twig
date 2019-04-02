@@ -5,11 +5,6 @@
 {% block body %}
     <main class="container login-wrapper">
         <div class="login__box z-depth-2">
-            <div class="right-align">
-                <a href="{{ path('register') }}">
-                    Create an account
-                </a>
-            </div>
             {% if error %}
                 <div class="login__errors">
                     {{ error.messageKey|trans(error.messageData, 'security') }}
@@ -38,6 +33,10 @@
                        value="{{ csrf_token('authenticate') }}"
                 >
                 <button class="waves-effect waves-light btn" type="submit">login</button>
+                <br />
+                <a class="waves-effect waves-light btn btn-small green" href="{{ path('register') }}">
+                    sign up
+                </a>
             </form>
             <div class="login__box__footer center-align">
                 <p><small>
