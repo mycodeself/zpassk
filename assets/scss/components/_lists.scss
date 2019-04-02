@@ -1,0 +1,23 @@
+/**
+ * PASSWORDS LIST
+ */
+.passwords-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+  .passwords-list__item {
+    margin: 0.5em;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      height: 100%;
+      width: 100%;
+    }
+  }

@@ -1,5 +1,26 @@
 {% extends 'layout.html.twig' %}
+{% block title %}Zero PASSword Knowledge :: Profile{% endblock %}
+
 
 {% block main %}
-    <h1>Profile</h1>
+    <header class="header">
+        <h3 class="header__title">Profile</h3>
+    </header>
+    <div class="profile-container">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>E-mail:</strong> {{ user.email }}</p>
+        <p><strong>Role: </strong> {{ user.roles[0]|slice(5) }}</p>
+        <p>
+            <h6>Your public key:</h6>
+            <textarea class="materialize-textarea" disabled>
+                {{ user.keyPair.publicKeyDecoded }}
+            </textarea>
+        </p>
+        <p>
+            <h6>Your private key encrypted:</h6>
+            <textarea class="materialize-textarea" disabled>
+                {{ user.keyPair.privateKeyDecoded }}
+            </textarea>
+        </p>
+    </div>
 {% endblock %}

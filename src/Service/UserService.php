@@ -69,11 +69,6 @@ class UserService
             $save = true;
         }
 
-        if(!empty($updateUser->getNewPassword())) {
-            $user->changePassword($updateUser->getNewPassword());
-            $save = true;
-        }
-
         if($user->isEnabled() !== $updateUser->isEnabled()) {
             if($user->isEnabled()) {
                 $user->disable();

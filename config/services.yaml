@@ -85,3 +85,4 @@ services:
             $mailer: '@mailer'
             $templating: '@twig'
             $defaultFrom: '%mail.default_from%'
+            $router: '@router'

@@ -1,4 +1,6 @@
 import {decryptCredentials} from "./crypto";
+import {createAndOpenPasswordModal} from "./modals";
+import spinner from "./spinner";
 
 var openpgp = require('openpgp');
 
@@ -14,11 +16,14 @@ function viewPasswordButtonListener(event) {
   const name = event.target.dataset.name;
   const url = event.target.dataset.url;
 
+  spinner.open();
+
   decryptCredentials(key, username, password).then(data => {
     data.name = name;
     data.url = url;
-
+    spinner.close();
     //open modal with data
+    createAndOpenPasswordModal(data);
     console.log(data);
   })
 }

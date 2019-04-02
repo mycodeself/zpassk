@@ -26,34 +26,16 @@ class UpdateUserDTO
     private $enabled;
 
     /**
-     * @var string
-     * @Assert\Length(min=8, max=150)
-     */
-    private $newPassword;
-
-    /**
-     * @var string
-     */
-    private $privateKey;
-
-    /**
-     * @var string
-     */
-    private $publicKey;
-
-    /**
      * UpdateUserDTO constructor.
      * @param int $id
      * @param string $email
+     * @param bool $enabled
      */
-    public function __construct(int $id, string $email, bool $enabled, string $newPassword = '')
+    public function __construct(int $id, string $email, bool $enabled)
     {
         $this->id = $id;
         $this->email = $email;
         $this->enabled = $enabled;
-        $this->newPassword = $newPassword;
-        $this->privateKey = '';
-        $this->publicKey = '';
     }
 
     /**
@@ -89,22 +71,6 @@ class UpdateUserDTO
     }
 
     /**
-     * @return string
-     */
-    public function getNewPassword(): string
-    {
-        return $this->newPassword;
-    }
-
-    /**
-     * @param string $newPassword
-     */
-    public function setNewPassword(string $newPassword): void
-    {
-        $this->newPassword = $newPassword;
-    }
-
-    /**
      * @param bool $enabled
      */
     public function setEnabled(bool $enabled): void
@@ -112,44 +78,13 @@ class UpdateUserDTO
         $this->enabled = $enabled;
     }
 
+    /**
+     * @return bool
+     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
-
-    /**
-     * @return string
-     */
-    public function getPrivateKey(): string
-    {
-        return $this->privateKey;
-    }
-
-    /**
-     * @param string $privateKey
-     */
-    public function setPrivateKey(string $privateKey): void
-    {
-        $this->privateKey = $privateKey;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicKey(): string
-    {
-        return $this->publicKey;
-    }
-
-    /**
-     * @param string $publicKey
-     */
-    public function setPublicKey(string $publicKey): void
-    {
-        $this->publicKey = $publicKey;
-    }
-
-
 
     /**
      * @return UpdateUserDTO

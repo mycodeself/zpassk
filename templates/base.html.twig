@@ -3,13 +3,14 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Zero PASSword Knowledge{% endblock %}</title>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         {% block stylesheets %}
             <link rel="stylesheet" type="text/css" href="{{ asset('build/app.css') }}">
         {% endblock %}
     </head>
     <body>
+        {{ include('_partials/_spinner.html.twig') }}
         {% include '_partials/_flash_messages.html.twig' %}
         {% block body %}{% endblock %}
         {% block javascripts %}

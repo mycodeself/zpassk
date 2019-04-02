@@ -19,27 +19,10 @@ class UpdateUserType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
             ])
-            ->add('newPassword', PasswordType::class,[
-                'required' => false,
-                'attr' => ['id' => 'password'],
-            ])
             ->add('enabled', CheckboxType::class, [
                 'required' => false,
             ])
-            ->add('privateKey', HiddenType::class)
-            ->add('publicKey', HiddenType::class)
         ;
-
-        // hack to avoid returning null when no values was send
-        $builder->get('newPassword')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($array) {
-                    return (empty($array)) ? '' : $array[0];
-                },
-                function ($string) {
-                    return is_null($string) ? '' : $string;
-                }
-            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -49,6 +32,5 @@ class UpdateUserType extends AbstractType
             'attr' => ['id' => 'update_user_form']
         ]);
     }
-
 
 }

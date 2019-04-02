@@ -13,4 +13,14 @@ window.onload = function (e) {
   initializeFlashMessages();
   addFormListeners();
   addButtonListeners();
+
+  // empty form on invalid form
+  let elements = [];
+  elements.push(document.getElementById('password_form_username'));
+  elements.push(document.getElementById('password_form_password'));
+  elements.forEach(input => {
+    if(input) {
+      input.value = '';
+    }
+  });
 };

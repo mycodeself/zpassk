@@ -2,6 +2,8 @@
 
 namespace App\Service\DTO;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 class PasswordDTO
 {
     /**
@@ -11,26 +13,33 @@ class PasswordDTO
 
     /**
      * @var string
+     * @Assert\NotBlank()
+     * @Assert\Length(min=3, max=40)
      */
     private $name = '';
 
     /**
      * @var string
+     * @Assert\NotBlank()
      */
     private $username = '';
 
     /**
      * @var string
+     * @Assert\NotBlank()
      */
     private $password = '';
 
     /**
      * @var string
+     * @Assert\NotBlank()
+     * @Assert\Url()
      */
     private $url = '';
 
     /**
      * @var string
+     * @Assert\NotBlank()
      */
     private $key = '';
 

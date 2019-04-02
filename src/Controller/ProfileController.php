@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Security\AuthUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,12 @@ class ProfileController extends AbstractController
      */
     public function profile(Request $request): Response
     {
-        return $this->render('profile/profile.html.twig');
+        /** @var AuthUser $authUser */
+        $authUser = $this->getUser();
+        $user = $authUser->getUser();
+
+        return $this->render('profile/profile.html.twig', [
+            'user' => $user
+        ]);
     }
 }

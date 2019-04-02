@@ -35,6 +35,16 @@ class KeyPair
         return $this->privateKey;
     }
 
+    public function publicKeyDecoded(): string
+    {
+        return base64_decode($this->publicKey);
+    }
+
+    public function privateKeyDecoded(): string
+    {
+        return base64_decode($this->privateKey);
+    }
+
     public function equals(KeyPair $keyPair): bool
     {
         return $keyPair->publicKey() === $this->publicKey

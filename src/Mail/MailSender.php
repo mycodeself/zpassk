@@ -3,6 +3,8 @@
 namespace App\Mail;
 
 use App\Entity\User;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 class MailSender
 {
@@ -22,16 +24,22 @@ class MailSender
     private $defaultFrom;
 
     /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
      * MailSender constructor.
      * @param \Swift_Mailer $mailer
      * @param \Twig_Environment $templating
      * @param string $defaultFrom
      */
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, string $defaultFrom)
+    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $templating, string $defaultFrom, RouterInterface $router)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
         $this->defaultFrom = $defaultFrom;
+        $this->router = $router;
     }
 
     /**
@@ -42,13 +50,18 @@ class MailSender
      */
     public function sendRecoveryPasswordEmail(User $user): void
     {
+        $url = $this->router->generate('change_password_token', [
+            'token' => $user->getToken()
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
         $body = $this->templating->render('mail/recovery_password_mail.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'url' => $url
         ]);
 
         $message = $this->createMessage()
             ->setSubject('Forgot your password?')
-            ->setFrom($this->defaultFrom, 'SocialIM')
+            ->setFrom($this->defaultFrom, 'Zero PASSword Knowledge')
             ->setTo($user->getEmail())
             ->setBody($body, 'text/html');
 

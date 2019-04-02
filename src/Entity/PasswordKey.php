@@ -71,7 +71,7 @@ class PasswordKey
 
     public function __toString(): string
     {
-        return $this->password->getName() . ' - ' . $this->password->getUrl();
+        return $this->password->getName();
     }
 
 
