@@ -12,6 +12,7 @@
         <ul class="passwords-list">
             {% for passwordKey in ownPasswords %}
                 <li class="passwords-list__item">
+                    <a href="{{ path('password_share', {id: passwordKey.password.id}) }}">SHARE</a>
                     <button
                             type="button"
                             class="js-view-password-btn btn btn-small deep-orange darken-1"

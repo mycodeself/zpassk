@@ -93,4 +93,19 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
 
         return $user;
     }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findAllExcept(User $user): array
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $qb
+            ->where('u.id != :id')
+            ->setParameter('id', $user->getId());
+
+        return $qb->getQuery()->getResult();
+    }
 }

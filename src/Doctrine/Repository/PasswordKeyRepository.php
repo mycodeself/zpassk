@@ -2,6 +2,7 @@
 
 namespace App\Doctrine\Repository;
 
+use App\Entity\Password;
 use App\Entity\PasswordKey;
 use App\Entity\User;
 use App\Exception\PasswordKeyNotFoundException;
@@ -85,4 +86,57 @@ class PasswordKeyRepository extends EntityRepository implements PasswordKeyRepos
 
         return $query->getResult();
     }
+
+    /**
+     * @param User $owner
+     * @param int $passwordId
+     * @return PasswordKey
+     * @throws PasswordKeyNotFoundException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getByOwnerAndPasswordId(User $owner, int $passwordId): PasswordKey
+    {
+        $qb = $this->createQueryBuilder('pk');
+        $query = $qb
+            ->innerJoin('pk.password', 'p')
+            ->andWhere('p.owner = :owner')
+            ->andWhere('p.id = :passwordId')
+            ->setParameters([
+                'owner' => $owner,
+                'passwordId' => $passwordId
+            ])
+            ->getQuery();
+
+        $result = $query->getOneOrNullResult();
+
+        if(empty($result)) {
+            throw new PasswordKeyNotFoundException($passwordId);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param int $id
+     * @param User $user
+     * @return array
+     */
+    public function findByPasswordIdExcludeUser(int $id, User $user): array
+    {
+        $qb = $this->createQueryBuilder('pk');
+        $query = $qb
+            ->innerJoin('pk.password', 'p')
+            ->innerJoin('pk.user', 'u')
+            ->andWhere('p.id = :passwordId')
+            ->andWhere('u.id != :userId')
+            ->setParameters([
+                'passwordId' => $id,
+                'userId' => $user->getId()
+            ])
+            ->orderBy('u.username', 'ASC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
 }

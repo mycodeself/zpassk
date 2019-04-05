@@ -1,11 +1,13 @@
-import {decryptCredentials} from "./crypto";
+import {decryptCredentials, reencryptKey} from "./crypto";
 import {createAndOpenPasswordModal} from "./modals";
 import spinner from "./spinner";
+import $ from 'jquery'
 
 var openpgp = require('openpgp');
 
 export function addButtonListeners() {
-  addOnClickListenerByClass('js-view-password-btn', viewPasswordButtonListener)
+  addOnClickListenerByClass('js-view-password-btn', viewPasswordButtonListener);
+  addOnClickListenerByClass('js-share-password-btn', sharePasswordButtonListener);
 }
 
 function viewPasswordButtonListener(event) {
@@ -24,15 +26,27 @@ function viewPasswordButtonListener(event) {
     spinner.close();
     //open modal with data
     createAndOpenPasswordModal(data);
-    console.log(data);
   })
 }
 
-function addOnClickListenerById(buttonId, listener) {
-  const button = document.getElementById(buttonId);
-  if(button) {
-    button.addEventListener('click', listener)
-  }
+function sharePasswordButtonListener(event) {
+  event.preventDefault();
+  const keyArmored = atob(event.target.dataset.k);
+  const publicKeyArmored = atob(event.target.dataset.pk);
+  const userId = event.target.dataset.u;
+
+  spinner.open();
+  reencryptKey(keyArmored, publicKeyArmored).then(key => {
+    console.log(key);
+
+    const url = '/ajax' + window.location.pathname;
+
+    $.post(url, {userId, key}, function () {
+      console.log('success');
+    });
+    spinner.close();
+  })
+
 }
 
 function addOnClickListenerByClass(className, listener) {

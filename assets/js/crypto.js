@@ -1,5 +1,6 @@
 import {sha512} from "js-sha512";
 import {splitString} from "./utils";
+import {SESSION_HASH_KEY} from "./constants";
 
 const openpgp = require('openpgp');
 
@@ -9,10 +10,10 @@ export function sha512AndSplit(source) {
 }
 
 export function encryptCredentials(key, username, password) {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
 
-    const keyString = Buffer.from(key).toString('hex')
-    const keyPair = getKeyPair();
+    const keyString = Buffer.from(key).toString('hex');
+    const keyPair = await getKeyPair();
 
     let options = {
       passwords: [keyString],
@@ -30,7 +31,6 @@ export function encryptCredentials(key, username, password) {
 
         //encrypt aes key
         const privKeyObj = (await openpgp.key.readArmored(keyPair.privateKey)).keys[0]
-        await privKeyObj.decrypt(sessionStorage.getItem('hash')) // TODO: Change hash key
 
         const options = {
           message: openpgp.message.fromBinary(key),
@@ -55,10 +55,9 @@ export function encryptCredentials(key, username, password) {
 
 export function decryptCredentials(key, username, password) {
   return new Promise(async resolve => {
-    const keyPair = getKeyPair();
+    const keyPair = await getKeyPair();
 
     const prvKeyObj = (await openpgp.key.readArmored(keyPair.privateKey)).keys[0];
-    await prvKeyObj.decrypt(sessionStorage.getItem('hash'));
 
     const options = {
       message: await openpgp.message.readArmored(key),
@@ -90,14 +89,64 @@ export function decryptCredentials(key, username, password) {
   })
 }
 
-function getKeyPair() {
+export function reencryptKey(keyEncrypted, publicKey) {
+  return new Promise(async resolve => {
+
+    const plainKey = await decryptKey(keyEncrypted);
+    const keyArmored = await encryptKeyWithPublicKey(plainKey, publicKey);
+
+    resolve(btoa(keyArmored))
+  });
+}
+
+async function encryptKeyWithPublicKey(key, publicKey) {
+  const keyPair = await getKeyPair();
+  const privKeyObj = (await openpgp.key.readArmored(keyPair.privateKey)).keys[0];
+
+  const options = {
+    message: openpgp.message.fromBinary(key),
+    publicKeys: (await openpgp.key.readArmored(publicKey)).keys,
+    privateKeys: [privKeyObj]
+  };
+
+  const cipher = await openpgp.encrypt(options);
+
+  return cipher.data;
+}
+
+async function decryptKey(key) {
+
+  const keyPair = await getKeyPair();
+  const prvKeyObj = (await openpgp.key.readArmored(keyPair.privateKey)).keys[0];
+  const options = {
+    message: await openpgp.message.readArmored(key),
+    publicKeys: (await openpgp.key.readArmored(keyPair.publicKey)).keys,
+    privateKeys: [prvKeyObj],
+    format: 'binary'
+  };
+
+  const plain = await openpgp.decrypt(options);
+
+  return plain.data;
+}
+
+async function getKeyPair() {
   const prvKeyElement = document.getElementById('prv_key');
   const pubKeyElement = document.getElementById('pub_key');
-  const privateKey = atob(prvKeyElement.value);
+  const privateKeyEncrypted = atob(prvKeyElement.value);
   const publicKey = atob(pubKeyElement.value);
+
+  const options = {
+    message: await openpgp.message.readArmored(privateKeyEncrypted),
+    passwords: [sessionStorage.getItem(SESSION_HASH_KEY)],
+  };
+
+  const key = await openpgp.decrypt(options);
+  const privateKey = key.data;
 
   return {
     privateKey,
     publicKey
   }
+
 }

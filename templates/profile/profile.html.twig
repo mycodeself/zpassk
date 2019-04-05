@@ -12,15 +12,11 @@
         <p><strong>Role: </strong> {{ user.roles[0]|slice(5) }}</p>
         <p>
             <h6>Your public key:</h6>
-            <textarea class="materialize-textarea" disabled>
-                {{ user.keyPair.publicKeyDecoded }}
-            </textarea>
+            <textarea class="materialize-textarea" disabled>{{ user.keyPair.publicKeyDecoded }}</textarea>
         </p>
         <p>
-            <h6>Your private key encrypted:</h6>
-            <textarea class="materialize-textarea" disabled>
-                {{ user.keyPair.privateKeyDecoded }}
-            </textarea>
+            <h6>Your private key protected:</h6>
+            <textarea class="materialize-textarea" disabled>{{ user.keyPair.privateKeyDecoded }}</textarea>
         </p>
     </div>
 {% endblock %}

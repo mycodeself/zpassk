@@ -1,7 +1,8 @@
-import openpgp, {crypto} from 'openpgp'
+import openpgp, {crypto, message} from 'openpgp'
 
 import spinner from './spinner'
 import {encryptCredentials, sha512AndSplit} from "./crypto";
+import {SESSION_HASH_KEY} from "./constants";
 
 export function addFormListeners() {
 	addFormSubmitListener('login_form', loginFormListener);
@@ -18,9 +19,8 @@ function loginFormListener(event) {
 	if(passwordInput) {
 		spinner.open();
 		const hashParts = sha512AndSplit(passwordInput.value);
-		console.log(hashParts[0]);
 		passwordInput.value = hashParts[0];
-		sessionStorage.setItem('hash', hashParts[1]);
+		sessionStorage.setItem(SESSION_HASH_KEY, hashParts[1]);
 		event.target.submit();
 		spinner.close();
 	}
@@ -44,18 +44,30 @@ function registerUserFormListener(event) {
 	const hashParts = sha512AndSplit(firstPasswordInput.value);
 
 	const options = {
-		userIds: [{ username: usernameInput.value, email:emailInput.value }],
-		curve: "ed25519",
-		passphrase: hashParts[1]
+		userIds: [{ username: usernameInput.value, email: emailInput.value }],
+		curve: "curve25519",
 	};
 
-	openpgp.generateKey(options).then(function(key) {
-		publicKeyInput.value = btoa(key.publicKeyArmored);
-		privateKeyInput.value = btoa(key.privateKeyArmored);
-		firstPasswordInput.value = hashParts[0];
-		secondPasswordInput.value = hashParts[0];
-		spinner.close();
-		event.target.submit();
+	openpgp.generateKey(options).then(async function (key) {
+		const publicKey = key.publicKeyArmored;
+		const privateKey = key.privateKeyArmored;
+
+		const options = {
+			message: await message.fromText(privateKey),
+			passwords: [hashParts[1]],
+		};
+
+		openpgp.encrypt(options).then(function(cipher) {
+			const privateKeyEncrypted = cipher.data;
+
+			firstPasswordInput.value = hashParts[0];
+			secondPasswordInput.value = hashParts[0];
+			publicKeyInput.value = btoa(publicKey);
+			privateKeyInput.value = btoa(privateKeyEncrypted);
+
+			spinner.close();
+			event.target.submit();
+		});
 	});
 
 }

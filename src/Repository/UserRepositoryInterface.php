@@ -48,4 +48,10 @@ interface UserRepositoryInterface
      */
     public function save(User $user): void;
 
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findAllExcept(User $user): array;
+
 }
