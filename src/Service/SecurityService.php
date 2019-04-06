@@ -2,11 +2,16 @@
 
 namespace App\Service;
 
+use App\Entity\User;
+use App\Entity\ValueObject\KeyPair;
+use App\Entity\ValueObject\PasswordEncoded;
+use App\Exception\UserAlreadyExistsException;
 use App\Exception\UserNotFoundException;
 use App\Mail\MailSender;
 use App\Repository\UserRepositoryInterface;
 use App\Service\DTO\ChangePasswordWithTokenDTO;
 use App\Service\DTO\RecoveryPasswordDTO;
+use App\Service\DTO\UserDTO;
 
 class SecurityService
 {
@@ -47,7 +52,7 @@ class SecurityService
         $this->userRepository->save($user);
 
         try {
-            $this->mailSender->sendRecoveryPasswordEmail($user);
+            $this->mailSender->sendRecoveryPasswordMail($user);
         } catch (\Twig_Error_Loader $e) {
         } catch (\Twig_Error_Runtime $e) {
         } catch (\Twig_Error_Syntax $e) {
@@ -72,4 +77,46 @@ class SecurityService
         $this->userRepository->save($user);
     }
 
+    /**
+     * @param UserDTO $userDTO
+     * @throws UserAlreadyExistsException
+     * @throws \App\Exception\InvalidRoleException
+     */
+    public function registerUser(UserDTO $userDTO): void
+    {
+        if($this->userRepository->findByUsername($userDTO->getUsername())) {
+            throw new UserAlreadyExistsException();
+        }
+
+        if($this->userRepository->findByEmail($userDTO->getEmail())) {
+            throw new UserAlreadyExistsException();
+        }
+
+        $password = new PasswordEncoded($userDTO->getPlainPassword());
+        $roles = $userDTO->isAdmin() ? ['ROLE_ADMIN'] : ['ROLE_USER'];
+        $keyPair = new KeyPair($userDTO->getPrivateKey(), $userDTO->getPublicKey());
+
+        $user = new User($userDTO->getUsername(), $userDTO->getEmail(), $password, $roles, $keyPair, true);
+
+        $this->userRepository->save($user);
+
+        $this->mailSender->sendActivateAccountMail($user);
+    }
+
+    /**
+     * @param string $token
+     * @throws UserNotFoundException
+     */
+    public function activateAccount(string $token): void
+    {
+        $user = $this->userRepository->findByActivationToken($token);
+
+        if(empty($user)) {
+            throw new UserNotFoundException($token);
+        }
+
+        $user->enable();
+
+        $this->userRepository->save($user);
+    }
 }

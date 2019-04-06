@@ -48,7 +48,7 @@ class MailSender
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function sendRecoveryPasswordEmail(User $user): void
+    public function sendRecoveryPasswordMail(User $user): void
     {
         $url = $this->router->generate('change_password_token', [
             'token' => $user->getToken()
@@ -61,6 +61,26 @@ class MailSender
 
         $message = $this->createMessage()
             ->setSubject('Forgot your password?')
+            ->setFrom($this->defaultFrom, 'Zero PASSword Knowledge')
+            ->setTo($user->getEmail())
+            ->setBody($body, 'text/html');
+
+        $this->mailer->send($message);
+    }
+
+    public function sendActivateAccountMail(User $user): void
+    {
+        $url = $this->router->generate('activate_account_token', [
+            'token' => $user->activationToken()
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $body = $this->templating->render('mail/activate_account_mail.html.twig', [
+            'user' => $user,
+            'url' => $url
+        ]);
+
+        $message = $this->createMessage()
+            ->setSubject('Activate your account')
             ->setFrom($this->defaultFrom, 'Zero PASSword Knowledge')
             ->setTo($user->getEmail())
             ->setBody($body, 'text/html');

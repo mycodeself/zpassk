@@ -45,6 +45,11 @@ class User
     private $token;
 
     /**
+     * @var string
+     */
+    private $activationToken;
+
+    /**
      * @var DateTimeInterface|null
      */
     private $passwordRequestedAt;
@@ -65,16 +70,25 @@ class User
      * @param string $email
      * @param PasswordEncoded $password
      * @param array $roles
+     * @param KeyPair $keyPair
+     * @param string $activationToken
      * @throws InvalidRoleException
      */
-    public function __construct(string $username, string $email, PasswordEncoded $password, array $roles, KeyPair $keyPair)
+    public function __construct(string $username, string $email, PasswordEncoded $password, array $roles, KeyPair $keyPair, bool $requireActivation = false)
     {
         $this->username = $username;
         $this->email = $email;
         $this->password = $password;
-        $this->enabled = true;
         $this->setRoles($roles);
         $this->keyPair = $keyPair;
+
+        if($requireActivation) {
+            $this->activationToken = bin2hex(random_bytes(32));
+            $this->disable();
+        } else {
+            $this->activationToken = '';
+            $this->enable();
+        }
     }
 
     /**
@@ -169,6 +183,7 @@ class User
      */
     public function enable(): void
     {
+        $this->activationToken = '';
         $this->enabled = true;
     }
 
@@ -223,9 +238,35 @@ class User
         return $this->getId() === $user->getId();
     }
 
+    /**
+     * @return bool
+     */
     public function isAdmin(): bool
     {
         return in_array(User::ROLE_ADMIN, $this->getRoles());
     }
 
+    /**
+     *
+     */
+    public function grantAdmin(): void
+    {
+        $this->roles = [User::ROLE_ADMIN];
+    }
+
+    /**
+     *
+     */
+    public function revokeAdmin(): void
+    {
+        $this->roles = [User::ROLE_USER];
+    }
+
+    /**
+     * @return string
+     */
+    public function activationToken(): string
+    {
+        return $this->activationToken;
+    }
 }

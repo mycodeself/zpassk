@@ -31,6 +31,12 @@ interface UserRepositoryInterface
     public function findByToken(string $token): ?User;
 
     /**
+     * @param string $token
+     * @return User|null
+     */
+    public function findByActivationToken(string $token): ?User;
+
+    /**
      * @param int $id
      * @return User
      */

@@ -8,6 +8,7 @@ use App\Exception\UserAlreadyExistsException;
 use App\Form\Type\UpdateUserType;
 use App\Form\Type\UserType;
 use App\Repository\UserRepositoryInterface;
+use App\Security\AuthUser;
 use App\Service\DTO\UpdateUserDTO;
 use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,8 +27,12 @@ class UserController extends AbstractController
      */
     public function listAll(Request $request, UserRepositoryInterface $userRepository): Response
     {
+        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
+        /** @var AuthUser $authUser */
+        $authUser = $this->getUser();
+        $user = $authUser->getUser();
         /** @var User[] $users */
-        $users = $userRepository->findAll();
+        $users = $userRepository->findAllExcept($user);
 
         return $this->render('user/user_list.html.twig', [
             'users' => $users
@@ -43,6 +48,7 @@ class UserController extends AbstractController
      */
     public function create(Request $request, UserService $userService): Response
     {
+        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
         $form = $this->createForm(UserType::class);
         $form->handleRequest($request);
 
@@ -77,6 +83,7 @@ class UserController extends AbstractController
         UserRepositoryInterface $userRepository,
         UserService $userService): Response
     {
+        $this->denyAccessUnlessGranted(User::ROLE_ADMIN);
         $user = $userRepository->getById($id);
         $updateUser = UpdateUserDTO::fromUser($user);
         $form = $this->createForm(UpdateUserType::class, $updateUser);

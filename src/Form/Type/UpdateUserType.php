@@ -22,6 +22,9 @@ class UpdateUserType extends AbstractType
             ->add('enabled', CheckboxType::class, [
                 'required' => false,
             ])
+            ->add('isAdmin', CheckboxType::class, [
+                'required' => false,
+            ])
         ;
     }
 

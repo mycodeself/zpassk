@@ -28,6 +28,13 @@ App\Entity\User:
       nullable: true
       unique: true
 
+    activationToken:
+      type: string
+      length: 180
+      nullable: true
+      unique: true
+
+
     passwordRequestedAt:
       type: datetime
       nullable: true

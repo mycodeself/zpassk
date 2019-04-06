@@ -115,4 +115,16 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
 
 
     }
+
+    /**
+     * @param string $token
+     * @return User|null
+     */
+    public function findByActivationToken(string $token): ?User
+    {
+        /** @var User|null $user */
+        $user = $this->findOneBy(['activationToken' => $token]);
+
+        return $user;
+    }
 }

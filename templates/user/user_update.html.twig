@@ -13,16 +13,26 @@
         <div class="card-content">
         {{ form_start(form) }}
         {{ form_errors(form) }}
-        <div class="switch right-align">
-            <label>
-                Disabled
-                {{ form_widget(form.enabled) }}
-                <span class="lever"></span>
-                Enabled
-            </label>
-        </div>
-        {{ form_row(form.email) }}
 
+        {{ form_row(form.email) }}
+            <div class="switch">
+                <label>
+                    Disabled
+                    {{ form_widget(form.enabled) }}
+                    <span class="lever"></span>
+                    Enabled
+                </label>
+            </div>
+            <br />
+            <div class="switch">
+                <label>
+                    User
+                    {{ form_widget(form.isAdmin) }}
+                    <span class="lever"></span>
+                    Admin
+                </label>
+            </div>
+            <br />
         {{ form_rest(form) }}
 
         <button class="waves-effect waves-light btn" type="submit">Save</button>

@@ -65,6 +65,7 @@ class UserService
             if($this->userRepository->findByEmail($updateUser->getEmail())) {
                 throw new UserAlreadyExistsException();
             }
+
             $user->changeEmail($updateUser->getEmail());
             $save = true;
         }
@@ -75,6 +76,17 @@ class UserService
             } else {
                 $user->enable();
             }
+
+            $save = true;
+        }
+
+        if($user->isAdmin() !== $updateUser->isAdmin()) {
+            if($updateUser->isAdmin()) {
+                $user->grantAdmin();
+            } else {
+                $user->revokeAdmin();
+            }
+
             $save = true;
         }
 

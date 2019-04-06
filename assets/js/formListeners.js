@@ -45,7 +45,7 @@ function registerUserFormListener(event) {
 
 	const options = {
 		userIds: [{ username: usernameInput.value, email: emailInput.value }],
-		curve: "curve25519",
+		curve: "p256",
 	};
 
 	openpgp.generateKey(options).then(async function (key) {

@@ -23,8 +23,12 @@ class SecurityController extends AbstractController
 {
     /**
      * @Route("/login/register", name="register")
+     *
+     * @param Request $request
+     * @param SecurityService $securityService
+     * @return Response
      */
-    public function register(Request $request, UserService $userService): Response
+    public function register(Request $request, SecurityService $securityService): Response
     {
         $form = $this->createForm(UserType::class);
 
@@ -34,8 +38,11 @@ class SecurityController extends AbstractController
             /** @var UserDTO $userDto */
             $userDto = $form->getData();
             try {
-                $userService->create($userDto);
-                $message = sprintf('Hello %s, your user has been created', $userDto->getUsername());
+                $securityService->registerUser($userDto);
+                $message = sprintf('Hello %s, an email has been sent to %s, you need to activate your account',
+                    $userDto->getUsername(),
+                    $userDto->getEmail()
+                );
                 $this->addFlash('success', $message);
                 return $this->redirectToRoute('login');
             } catch (InvalidRoleException $e) {
@@ -140,5 +147,24 @@ class SecurityController extends AbstractController
         return $this->render('security/change_password.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/login/activate-account/{token}", name="activate_account_token")
+     *
+     * @param string $token
+     * @param SecurityService $securityService
+     * @return Response
+     */
+    public function activateAccountWithToken(string $token, SecurityService $securityService): Response
+    {
+        try {
+            $securityService->activateAccount($token);
+        } catch (UserNotFoundException $e) {
+            return $this->redirectToRoute('index');
+        }
+
+        $this->addFlash('success', 'Your account has been enabled. Sign in!');
+        return $this->redirectToRoute('index');
     }
 }
