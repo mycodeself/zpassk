@@ -22,7 +22,7 @@ class IndexController extends AbstractController
         $authUser = $this->getUser();
         $user = $authUser->getUser();
 
-        $ownPasswords = $passwordKeyRepository->findAllByOwner($user);
+        $ownPasswords = $passwordKeyRepository->findAllByOwnerGroupedByPassword($user);
         $sharedPasswords = $passwordKeyRepository->findSharedForUser($user);
 
         return $this->render('index.html.twig', [

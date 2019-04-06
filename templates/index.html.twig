@@ -4,7 +4,7 @@
 
     {% if ownPasswords %}
         <header class="header">
-            <h4 class="header__title">own passwords</h4>
+            <h4>Your passwords</h4>
             <a href="{{ path('password_create') }}" class="waves-effect waves-light btn">
                 <i class="material-icons right">vpn_key</i> Add password
             </a>
@@ -12,10 +12,9 @@
         <ul class="passwords-list">
             {% for passwordKey in ownPasswords %}
                 <li class="passwords-list__item">
-                    <a href="{{ path('password_share', {id: passwordKey.password.id}) }}">SHARE</a>
                     <button
                             type="button"
-                            class="js-view-password-btn btn btn-small deep-orange darken-1"
+                            class="js-view-password-btn passwords-list__item__btn"
                             data-name="{{ passwordKey.password.name }}"
                             data-url="{{ passwordKey.password.url }}"
                             data-k="{{ passwordKey.key }}"
@@ -24,6 +23,24 @@
                     >
                         {{ passwordKey }}
                     </button>
+                    <div class="passwords-list__item__options">
+                        <a
+                                class="passwords-list__item__option"
+                                href="{{ path('password_share', {id: passwordKey.password.id}) }}"
+                                title="Share password"
+                        >
+                            <i class="material-icons">share</i>
+                        </a>
+                        <a
+                                class="passwords-list__item__option js-delete-password-btn"
+                                href="#"
+                                title="Delete password"
+                        >
+                            <i class="material-icons"
+                               data-n="{{ passwordKey.password.name }}"
+                               data-id="{{ passwordKey.password.id }}">delete</i>
+                        </a>
+                    </div>
                 </li>
             {% endfor %}
         </ul>
@@ -43,15 +60,24 @@
     {% endif %}
 
     {% if sharedPasswords %}
-        <h4>shared passwords</h4>
-        <ul>
+        <header class="header">
+            <h4 class="header__title">Passwords shared with you</h4>
+        </header>
+        <ul class="passwords-list">
             {% for passwordKey in sharedPasswords %}
-                <li
-                        data-k="{{ passwordKey.key }}"
-                        data-u="{{ passwordKey.password.username }}"
-                        data-p="{{ passwordKey.password.password }}"
-                >
-                    {{ passwordKey }}
+                <li class="passwords-list__item">
+                    <button
+                            type="button"
+                            class="js-view-password-btn passwords-list__item__btn"
+                            data-name="{{ passwordKey.password.name }}"
+                            data-url="{{ passwordKey.password.url }}"
+                            data-k="{{ passwordKey.key }}"
+                            data-u="{{ passwordKey.password.username }}"
+                            data-p="{{ passwordKey.password.password }}"
+                            data-opk="{{ passwordKey.password.owner.keyPair.publicKey }}"
+                    >
+                        {{ passwordKey }} (owner: {{ passwordKey.password.owner }})
+                    </button>
                 </li>
             {% endfor %}
         </ul>

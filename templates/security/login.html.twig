@@ -5,6 +5,9 @@
 {% block body %}
     <main class="container login-wrapper">
         <div class="login__box z-depth-2">
+            <header class="login__header">
+                <h4 class="login__header__title">zPASSk</h4>
+            </header>
             {% if error %}
                 <div class="login__errors">
                     {{ error.messageKey|trans(error.messageData, 'security') }}

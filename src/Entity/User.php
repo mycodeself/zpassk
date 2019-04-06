@@ -223,4 +223,9 @@ class User
         return $this->getId() === $user->getId();
     }
 
+    public function isAdmin(): bool
+    {
+        return in_array(User::ROLE_ADMIN, $this->getRoles());
+    }
+
 }

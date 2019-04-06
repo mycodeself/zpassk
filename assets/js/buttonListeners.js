@@ -1,13 +1,12 @@
 import {decryptCredentials, reencryptKey} from "./crypto";
-import {createAndOpenPasswordModal} from "./modals";
+import {createAndOpenConfirmDeletePasswordModal, createAndOpenPasswordModal} from "./modals";
 import spinner from "./spinner";
 import $ from 'jquery'
-
-var openpgp = require('openpgp');
 
 export function addButtonListeners() {
   addOnClickListenerByClass('js-view-password-btn', viewPasswordButtonListener);
   addOnClickListenerByClass('js-share-password-btn', sharePasswordButtonListener);
+  addOnClickListenerByClass('js-delete-password-btn', deletePasswordButtonListener)
 }
 
 function viewPasswordButtonListener(event) {
@@ -15,12 +14,14 @@ function viewPasswordButtonListener(event) {
   const key = atob(event.target.dataset.k);
   const username = atob(event.target.dataset.u);
   const password = atob(event.target.dataset.p);
+  const ownerPublicKey = event.target.dataset.opk ? atob(event.target.dataset.opk) : null;
   const name = event.target.dataset.name;
   const url = event.target.dataset.url;
 
+
   spinner.open();
 
-  decryptCredentials(key, username, password).then(data => {
+  decryptCredentials(key, username, password, ownerPublicKey).then(data => {
     data.name = name;
     data.url = url;
     spinner.close();
@@ -37,16 +38,24 @@ function sharePasswordButtonListener(event) {
 
   spinner.open();
   reencryptKey(keyArmored, publicKeyArmored).then(key => {
-    console.log(key);
-
     const url = '/ajax' + window.location.pathname;
 
     $.post(url, {userId, key}, function () {
-      console.log('success');
+      location.reload();
     });
     spinner.close();
   })
 
+}
+
+function deletePasswordButtonListener(event) {
+  event.preventDefault();
+  const passwordId = event.target.dataset.id;
+  const passwordName = event.target.dataset.n;
+  createAndOpenConfirmDeletePasswordModal({
+    name: passwordName,
+    id: passwordId
+  });
 }
 
 function addOnClickListenerByClass(className, listener) {

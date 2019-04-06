@@ -30,22 +30,11 @@ export function encryptCredentials(key, username, password) {
         const passwordEncrypted = passwordCipher.data;
 
         //encrypt aes key
-        const privKeyObj = (await openpgp.key.readArmored(keyPair.privateKey)).keys[0]
-
-        const options = {
-          message: openpgp.message.fromBinary(key),
-          publicKeys: (await openpgp.key.readArmored(keyPair.publicKey)).keys,
-          privateKeys: [privKeyObj]
-        };
-
-        openpgp.encrypt(options).then(keyCipher => {
-          const keyEncrypted = keyCipher.data;
-
-          resolve({
-            username: btoa(usernameEncrypted),
-            password: btoa(passwordEncrypted),
-            key: btoa(keyEncrypted)
-          })
+        const keyEncrypted = await encryptKey(key, keyPair.publicKey, keyPair.privateKey);
+        resolve({
+          username: btoa(usernameEncrypted),
+          password: btoa(passwordEncrypted),
+          key: btoa(keyEncrypted)
         })
       })
     })
@@ -53,59 +42,50 @@ export function encryptCredentials(key, username, password) {
   })
 }
 
-export function decryptCredentials(key, username, password) {
+export function decryptCredentials(key, username, password, ownerPubKey) {
   return new Promise(async resolve => {
     const keyPair = await getKeyPair();
+    const signPubKey = ownerPubKey ? ownerPubKey : keyPair.publicKey;
+    const keyPlain = await decryptKey(key, keyPair.privateKey, signPubKey)
+    const keyString = Buffer.from(keyPlain).toString('hex');
 
-    const prvKeyObj = (await openpgp.key.readArmored(keyPair.privateKey)).keys[0];
-
-    const options = {
-      message: await openpgp.message.readArmored(key),
-      publicKeys: (await openpgp.key.readArmored(keyPair.publicKey)).keys,
-      privateKeys: [prvKeyObj],
-      format: 'binary'
+    let options = {
+      passwords: [keyString],
+      message: await openpgp.message.readArmored(username)
     };
-    // decrypt key
-    openpgp.decrypt(options).then(async keyPlain => {
-      const keyString = Buffer.from(keyPlain.data).toString('hex');
-      let options = {
-        passwords: [keyString],
-        message: await openpgp.message.readArmored(username)
-      };
-      // decrypt username
-      openpgp.decrypt(options).then(async usernamePlain => {
-        // decrypt password
-        options.message = await openpgp.message.readArmored(password);
-        openpgp.decrypt(options).then(passwordPlain => {
+    // decrypt username
+    openpgp.decrypt(options).then(async usernamePlain => {
+      // decrypt password
+      options.message = await openpgp.message.readArmored(password);
+      openpgp.decrypt(options).then(passwordPlain => {
 
-          resolve({
-            username: usernamePlain.data,
-            password: passwordPlain.data
-          })
-
+        resolve({
+          username: usernamePlain.data,
+          password: passwordPlain.data
         })
-      });
+
+      })
     });
-  })
+  });
 }
 
 export function reencryptKey(keyEncrypted, publicKey) {
   return new Promise(async resolve => {
+    const keyPair = await getKeyPair();
+    const plainKey = await decryptKey(keyEncrypted, keyPair.privateKey, keyPair.publicKey);
+    const key = await encryptKey(plainKey, publicKey, keyPair.privateKey);
 
-    const plainKey = await decryptKey(keyEncrypted);
-    const keyArmored = await encryptKeyWithPublicKey(plainKey, publicKey);
-
-    resolve(btoa(keyArmored))
+    resolve(btoa(key))
   });
 }
 
-async function encryptKeyWithPublicKey(key, publicKey) {
-  const keyPair = await getKeyPair();
-  const privKeyObj = (await openpgp.key.readArmored(keyPair.privateKey)).keys[0];
+async function encryptKey(key, pubKeyArmored, signPrvKeyArmored) {
+  const privKeyObj = (await openpgp.key.readArmored(signPrvKeyArmored)).keys[0];
+  const pubKeyObj = (await openpgp.key.readArmored(pubKeyArmored)).keys;
 
   const options = {
     message: openpgp.message.fromBinary(key),
-    publicKeys: (await openpgp.key.readArmored(publicKey)).keys,
+    publicKeys: pubKeyObj,
     privateKeys: [privKeyObj]
   };
 
@@ -114,13 +94,13 @@ async function encryptKeyWithPublicKey(key, publicKey) {
   return cipher.data;
 }
 
-async function decryptKey(key) {
+async function decryptKey(key, prvKeyArmored, signPubKeyArmored) {
+  const prvKeyObj = (await openpgp.key.readArmored(prvKeyArmored)).keys[0];
+  const pubKeyObj = (await openpgp.key.readArmored(signPubKeyArmored)).keys;
 
-  const keyPair = await getKeyPair();
-  const prvKeyObj = (await openpgp.key.readArmored(keyPair.privateKey)).keys[0];
   const options = {
     message: await openpgp.message.readArmored(key),
-    publicKeys: (await openpgp.key.readArmored(keyPair.publicKey)).keys,
+    publicKeys: pubKeyObj,
     privateKeys: [prvKeyObj],
     format: 'binary'
   };

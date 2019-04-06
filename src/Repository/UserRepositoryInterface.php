@@ -54,4 +54,6 @@ interface UserRepositoryInterface
      */
     public function findAllExcept(User $user): array;
 
+    public function findAllBySharedPasswordIdExcludeUser(int $id, User $user): array;
+
 }

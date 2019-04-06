@@ -8,6 +8,7 @@ class RecoveryPasswordDTO
 {
     /**
      * @var string
+     * @Assert\NotBlank()
      * @Assert\Email(checkMX = true, mode="strict")
      */
     private $email;

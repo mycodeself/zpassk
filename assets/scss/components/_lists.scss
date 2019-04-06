@@ -3,21 +3,86 @@
  */
 .passwords-list {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: auto;
+  grid-template-columns: repeat( auto-fit, minmax(320px, 1fr) );
   justify-content: center;
   align-items: center;
 }
 
   .passwords-list__item {
     margin: 0.5em;
-    height: 64px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 
-    button {
+  }
+
+    .passwords-list__item__btn {
       height: 100%;
       width: 100%;
+      border: none;
+      border-radius: 2px;
+      display: inline-block;     ;
+      line-height: 14px;
+      padding: 0 16px;
+      text-transform: uppercase;
+      vertical-align: middle;
+      color: #FAFAFA;
+      overflow: hidden;
+      transition: all 0.4s ease-in-out;
+      word-wrap: break-word;
+      background: rgb(115,200,169);
+      background: linear-gradient(130deg, rgba(115,200,169,1) 80%, rgba(228,228,230,1) 100%);
+      @extend .z-depth-1;
+
+      &:hover {
+        color: $secondary-color;
+        cursor: pointer;
+        @extend .z-depth-3;
+      }
+    }
+
+
+  .passwords-list__item__options {
+    position: absolute;
+    right: 0.5em;
+    top: 0.5em;
+  }
+
+  .passwords-list__item__option {
+    margin: 0.2em;
+    color: #FAFAFA;
+    transition: color 0.4s ease-in-out;
+
+    &:hover {
+      color: $secondary-color;
+    }
+  }
+
+
+/**
+ * PASSWORD SHARE USER LIST
+ */
+.share-users__wrapper {
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(260px, 1fr) );
+  justify-content: center;
+}
+
+  .share-users__list {
+
+  }
+
+  .share-users__list__item {
+    margin: 0.5em;
+    display: flex;
+    justify-content: space-around;
+
+
+    .btn-small {
+      height: 28.4px;
+      line-height: 28.4px;
+      font-size: 12px;
     }
   }

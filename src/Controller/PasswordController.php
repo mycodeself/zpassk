@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Exception\PasswordKeyNotFoundException;
+use App\Exception\PasswordNotFoundException;
 use App\Exception\UserNotFoundException;
 use App\Form\Type\PasswordFormType;
 use App\Repository\PasswordKeyRepositoryInterface;
@@ -17,7 +18,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -67,7 +67,6 @@ class PasswordController extends AbstractController
         $authUser = $this->getUser();
         $user = $authUser->getUser();
 
-        $users = $userRepository->findAllExcept($user);
         $passwordKey = $passwordKeyRepository->getByOwnerAndPasswordId($user, $id);
         $password = $passwordKey->getPassword();
 
@@ -75,10 +74,15 @@ class PasswordController extends AbstractController
             throw new AccessDeniedHttpException();
         }
 
+        $users = $userRepository->findAllExcept($user);
+
+        $shared = $passwordKeyRepository->findByPasswordIdExcludeUser($id, $user);
+
         return $this->render('password/password_share.html.twig', [
             'users' => $users,
             'password' => $password,
-            'passwordKey' => $passwordKey
+            'passwordKey' => $passwordKey,
+            'shared' => $shared
         ]);
     }
 
@@ -110,6 +114,75 @@ class PasswordController extends AbstractController
             return new JsonResponse($e->getMessage(), Response::HTTP_NOT_FOUND);
         }
 
+        $this->addFlash('success', 'The password has been shared.');
+
         return new JsonResponse();
+    }
+
+    /**
+     * @Route(path="/passwords/{passwordId}/unshare/{userId}", name="password_unshare")
+     *
+     * @param int $passwordId
+     * @param int $userId
+     * @param PasswordRepositoryInterface $passwordRepository
+     * @return Response
+     */
+    public function unshare(
+        int $passwordId,
+        int $userId,
+        PasswordRepositoryInterface $passwordRepository,
+        PasswordKeyRepositoryInterface $passwordKeyRepository
+    ): Response
+    {
+        try {
+            $password = $passwordRepository->getById($passwordId);
+        } catch (PasswordNotFoundException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        /** @var AuthUser $authUser */
+        $authUser = $this->getUser();
+        $user = $authUser->getUser();
+
+        if(!$password->getOwner()->equals($user)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $passwordKey = $passwordKeyRepository->findById($passwordId, $userId);
+        $passwordKeyRepository->delete($passwordKey);
+
+        $this->addFlash('success', sprintf('The password "%s" has been unshared with user.', $password));
+
+        return new RedirectResponse($this->generateUrl('password_share', ['id' => $passwordId]));
+    }
+
+    /**
+     * @Route(path="/passwords/{id}/delete", name="password_delete")
+
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function delete(int $id, PasswordRepositoryInterface $passwordRepository): Response
+    {
+        /** @var AuthUser $authUser */
+        $authUser = $this->getUser();
+        $user = $authUser->getUser();
+
+        try {
+            $password = $passwordRepository->getById($id);
+        } catch (PasswordNotFoundException $e) {
+            throw new NotFoundHttpException();
+        }
+
+        if(!$password->getOwner()->equals($user)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $passwordRepository->delete($password);
+
+        $this->addFlash('success', sprintf('The password "%s" has been removed.', $password));
+
+        return new RedirectResponse($this->generateUrl('index'));
     }
 }

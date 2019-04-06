@@ -108,4 +108,11 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findAllBySharedPasswordIdExcludeUser(int $id, User $user): array
+    {
+        $qb = $this->createQueryBuilder('u');
+
+
+    }
 }

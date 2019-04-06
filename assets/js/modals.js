@@ -2,7 +2,7 @@ import tingle from 'tingle.js';
 import 'tingle.js/dist/tingle.css'
 
 export function createAndOpenPasswordModal(data) {
-  var modal = new tingle.modal({
+  const modal = new tingle.modal({
     footer: false,
     closeMethods: ['overlay', 'button', 'escape'],
     closeLabel: "Close",
@@ -58,6 +58,39 @@ export function createAndOpenPasswordModal(data) {
     window.open(data.url);
     modal.close();
   })
+}
+
+export function createAndOpenConfirmDeletePasswordModal(password) {
+  const modal = new tingle.modal({
+    footer: true,
+    closeMethods: ['overlay', 'button', 'escape'],
+    closeLabel: "Close",
+    onClose: function() {
+      modal.destroy();
+    },
+    beforeClose: function() {
+      return true; // close the modal
+    }
+  });
+
+  modal.setContent(`
+    <div>
+      <p>Are you sure you want to delete the password "${password.name}"? This action cannot be undone</p>
+    </div>
+`);
+
+  modal.open();
+
+  modal.addFooterBtn('Cancel', 'tingle-btn tingle-btn--default tingle-btn--pull-right', function() {
+    modal.close();
+  });
+
+  modal.addFooterBtn('Delete', 'tingle-btn tingle-btn--danger tingle-btn--pull-right', function() {
+    modal.close();
+    window.location.href = `/passwords/${password.id}/delete`;
+  });
+
+  modal.open();
 }
 
 function copyToClipboard(str) {

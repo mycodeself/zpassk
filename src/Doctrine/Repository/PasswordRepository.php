@@ -57,4 +57,16 @@ class PasswordRepository extends EntityRepository implements PasswordRepositoryI
         $entityManager->persist($password);
         $entityManager->flush();
     }
+
+    /**
+     * @param Password $password
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function delete(Password $password): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($password);
+        $em->flush();
+    }
 }

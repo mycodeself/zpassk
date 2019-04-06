@@ -26,16 +26,22 @@ class UpdateUserDTO
     private $enabled;
 
     /**
+     * @var bool
+     */
+    private $isAdmin;
+
+    /**
      * UpdateUserDTO constructor.
      * @param int $id
      * @param string $email
      * @param bool $enabled
      */
-    public function __construct(int $id, string $email, bool $enabled)
+    public function __construct(int $id, string $email, bool $enabled, bool $isAdmin)
     {
         $this->id = $id;
         $this->email = $email;
         $this->enabled = $enabled;
+        $this->isAdmin = $isAdmin;
     }
 
     /**
@@ -87,10 +93,28 @@ class UpdateUserDTO
     }
 
     /**
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->isAdmin;
+    }
+
+    /**
+     * @param bool $isAdmin
+     */
+    public function setIsAdmin(bool $isAdmin): void
+    {
+        $this->isAdmin = $isAdmin;
+    }
+
+
+
+    /**
      * @return UpdateUserDTO
      */
     public static function fromUser(User $user): self
     {
-        return new self($user->getId(), $user->getEmail(), $user->isEnabled());
+        return new self($user->getId(), $user->getEmail(), $user->isEnabled(), $user->isAdmin());
     }
 }

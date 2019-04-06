@@ -41,9 +41,10 @@ class UserProvider implements UserProviderInterface
     {
         $user = $this->userRepository->findByUsername($username);
 
-        if(empty($user)) {
+        if(empty($user) || !$user->isEnabled()) {
             throw new UsernameNotFoundException($username);
         }
+
 
         return new AuthUser($user);
     }

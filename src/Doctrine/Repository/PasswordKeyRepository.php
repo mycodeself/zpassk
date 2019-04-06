@@ -24,10 +24,13 @@ class PasswordKeyRepository extends EntityRepository implements PasswordKeyRepos
      * @param int $id
      * @return PasswordKey|null
      */
-    public function findById(int $id): ?PasswordKey
+    public function findById(int $passwordId, int $userId): ?PasswordKey
     {
         /** @var PasswordKey $key */
-        $key = $this->find($id);
+        $key = $this->find([
+            'password' => $passwordId,
+            'user' => $userId
+        ]);
 
         return $key;
     }
@@ -37,12 +40,12 @@ class PasswordKeyRepository extends EntityRepository implements PasswordKeyRepos
      * @return PasswordKey
      * @throws PasswordKeyNotFoundException
      */
-    public function getById(int $id): PasswordKey
+    public function getById(int $passwordId, int $userId): PasswordKey
     {
-        $key = $this->findById($id);
+        $key = $this->findById($passwordId, $userId);
 
         if(empty($key)) {
-            throw new PasswordKeyNotFoundException($id);
+            throw new PasswordKeyNotFoundException($passwordId, $userId);
         }
 
         return $key;
@@ -60,14 +63,17 @@ class PasswordKeyRepository extends EntityRepository implements PasswordKeyRepos
         $entityManager->flush();
     }
 
-    public function findAllByOwner(User $owner): array
+    public function findAllByOwnerGroupedByPassword(User $owner): array
     {
         $qb = $this->createQueryBuilder('pk');
         $query = $qb
+            ->distinct()
             ->innerJoin('pk.password', 'p')
             ->andWhere('p.owner = :owner')
+            ->andWhere('pk.user = :owner')
             ->setParameter('owner', $owner)
             ->orderBy('p.name', 'ASC')
+            ->groupBy('pk.password')
             ->getQuery();
 
         return $query->getResult();
@@ -105,12 +111,13 @@ class PasswordKeyRepository extends EntityRepository implements PasswordKeyRepos
                 'owner' => $owner,
                 'passwordId' => $passwordId
             ])
+            ->groupBy('pk.password')
             ->getQuery();
 
         $result = $query->getOneOrNullResult();
 
         if(empty($result)) {
-            throw new PasswordKeyNotFoundException($passwordId);
+            throw new PasswordKeyNotFoundException($passwordId, $owner->getId());
         }
 
         return $result;
@@ -134,9 +141,21 @@ class PasswordKeyRepository extends EntityRepository implements PasswordKeyRepos
                 'userId' => $user->getId()
             ])
             ->orderBy('u.username', 'ASC')
+            ->groupBy('pk.user')
             ->getQuery();
 
         return $query->getResult();
     }
 
+    /**
+     * @param PasswordKey $key
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function delete(PasswordKey $key): void
+    {
+        $em = $this->getEntityManager();
+        $em->remove($key);
+        $em->flush();
+    }
 }
