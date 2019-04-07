@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\PasswordKey;
 use App\Exception\PasswordKeyNotFoundException;
 use App\Exception\PasswordNotFoundException;
 use App\Exception\UserNotFoundException;
@@ -74,9 +75,16 @@ class PasswordController extends AbstractController
             throw new AccessDeniedHttpException();
         }
 
-        $users = $userRepository->findAllExcept($user);
-
         $shared = $passwordKeyRepository->findByPasswordIdExcludeUser($id, $user);
+
+        $userIdsShared = [];
+        $userIdsShared[] = $user->getId();
+        /** @var PasswordKey $shareKey */
+        foreach ($shared as $shareKey) {
+            $userIdsShared[] = $shareKey->getUser()->getId();
+        }
+
+        $users = $userRepository->findAllIdNotIn($userIdsShared);
 
         return $this->render('password/password_share.html.twig', [
             'users' => $users,

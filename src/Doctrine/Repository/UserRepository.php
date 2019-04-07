@@ -127,4 +127,15 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
 
         return $user;
     }
+
+    public function findAllIdNotIn(array $userIds): array
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $qb
+            ->where('u.id NOT IN (:ids)')
+            ->setParameter('ids', $userIds);
+
+        return $qb->getQuery()->getResult();
+    }
 }

@@ -93,7 +93,7 @@ class SecurityService
         }
 
         $password = new PasswordEncoded($userDTO->getPlainPassword());
-        $roles = $userDTO->isAdmin() ? ['ROLE_ADMIN'] : ['ROLE_USER'];
+        $roles = ['ROLE_USER'];
         $keyPair = new KeyPair($userDTO->getPrivateKey(), $userDTO->getPublicKey());
 
         $user = new User($userDTO->getUsername(), $userDTO->getEmail(), $password, $roles, $keyPair, true);
